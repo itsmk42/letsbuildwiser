@@ -1,0 +1,137 @@
+Zaxis Studio — Minimal E-commerce (Next.js + Supabase)
+
+Milestones
+- Scaffolded Next.js 14 app with App Router and server actions enabled.
+- Implemented core pages: Home (product showcase), Products, Product Detail, Custom Orders.
+- Added cart (localStorage) and Checkout page with Cash on Delivery (COD).
+- Integrated Supabase (server/client) with products, orders, and SEO tables.
+- Built Admin portal: login guard via middleware + cookie, product CRUD, order management, SEO meta management.
+- Added minimalist, responsive global styles for fast load and clear presentation.
+
+Architecture Decisions
+- App Router with server components for fast, SEO-friendly pages; client components only where interactivity is needed (cart/forms).
+- Supabase used for data (products, orders, seo). Server client uses service role key if available; browser client limited to anon.
+- Admin auth is a simple password via cookie and middleware (env ADMIN_PASSWORD). Suitable for MVP; replace with Supabase Auth later.
+- Cart persisted in localStorage for simplicity; checkout posts to orders API with COD.
+- SEO meta stored in Supabase `seo` table and surfaced via `generateMetadata` where applicable.
+- Image hosting allows remote patterns; can move to Supabase Storage later.
+
+Implementation Notes
+- Fallback demo products appear if Supabase env is not set to keep UX intact.
+- Products API supports HTML form `_method` override for DELETE/PUT and JSON for standard CRUD.
+- Orders API supports form `_method` PATCH for admin status updates and JSON for creation.
+- Custom orders endpoints create orders with `custom` payload field; lithophane upload is placeholder (hook up Supabase Storage next).
+- Global styles prioritize minimal CSS, responsive grids, and small bundle.
+
+Env & Deployment
+- Required env: NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY (optional), ADMIN_PASSWORD.
+- Host on Vercel; set env vars in Vercel project settings; attach GitHub repo `itsmk42/zaxisstudio`.
+- Clean URLs via Next.js routes; SEO via `generateMetadata` with Supabase lookups.
+
+Future Work
+- Integrate PhonePe payment gateway, replacing COD-only checkout.
+- Replace admin password auth with Supabase Auth and RLS.
+- Supabase Storage for product images and lithophane uploads.
+- Add incremental static regeneration tuning and image optimization pipeline.
+
+---
+Navigation Redesign — 2025-11-09 14:18 UTC (v0.2.0)
+
+Summary
+- Modernized top navigation with Inter font, minimal gradient, smooth transitions, and mobile hamburger menu.
+
+Design & Styles
+- Typography: `Inter` via `next/font/google` with `display: swap` to optimize CLS.
+- Color: Light gradient navbar (`linear-gradient(180deg, #fff → rgba(255,255,255,0.9))`), subtle blur (`backdrop-filter: blur(6px)`), and natural text color.
+- Spacing: Desktop nav links have ≥24px gap; touch targets meet 48x48 minimum using `.nav-link` and `.nav-toggle` dimensions.
+- Transitions: 200–300ms hover/focus transitions (`transform`, `box-shadow`, `background-color`).
+
+Accessibility
+- ARIA: `role="navigation"`, `aria-label="Primary"` on `nav`.
+- Mobile toggle has `aria-controls="mobile-navigation"` and `aria-expanded` state.
+- Mobile menu uses `aria-hidden` appropriately.
+- Focus states maintained via `:focus-visible`.
+
+Responsive Behavior
+- Breakpoints: Desktop ≥768px shows `.nav-links`; mobile <768px shows `.nav-toggle` and overlays `.mobile-menu`.
+- Lazy-loading: Mobile menu loaded via dynamic import (`next/dynamic`) with `ssr: false` to reduce initial bundle.
+
+Implementation Details
+- Files:
+  - `app/layout.jsx`: integrated Inter font and switched to client `Navbar` component.
+  - `components/Navbar.jsx`: client nav with hamburger toggle and ARIA attributes.
+  - `components/MobileMenu.jsx`: lazy-loaded mobile overlay menu.
+  - `app/globals.css`: added nav gradient, transitions, spacing, mobile menu styles, and media queries.
+- Preserved existing routes: Home, Products, Custom Orders, Cart.
+
+Performance & Testing
+- Performance: Lazy-loaded mobile menu defers JS; expected <100ms impact on TTI under typical conditions.
+- Browser testing: Verified rendering in local preview; plan to manually verify Chrome, Safari, Firefox (latest).
+- Mobile testing: Plan to test on iOS and Android physical devices or emulators.
+- Contrast: Colors selected to meet WCAG AA with default text on light backgrounds.
+
+Version Control Notes
+- v0.2.0: Navbar redesign and font integration; CSS appended rather than destructive edits to minimize risk.
+
+---
+Mobile Menu Enhancements & Placeholders — 2025-11-09 14:30 UTC (v0.2.1)
+
+Summary
+- Added mobile menu close button, smooth menu transitions, and uniform product image placeholders.
+
+Mobile Menu
+- Close control: `mobile-close` button (48x48) with icon and `aria-label="Close menu"`.
+- Transitions: `.mobile-menu` uses `opacity` and `transform` transitions (200–300ms) for open/close.
+- Header: `mobile-menu-header` shows a simple brand label and close control.
+
+Placeholders
+- Replaced stock picsum images in demo data with local `public/placeholder.svg`.
+- Components (`Hero`, `ProductCard`, `ProductDetail`) detect stock URLs and fall back to placeholder with alt text `Image Coming Soon — <title>`.
+- Ensures consistent aspect ratio (400x300 in cards, 640x480 in detail, 820x540 in hero).
+
+Background Design
+- Refined `.site-grid-bg` to combine a subtle radial pattern with a light gradient for better readability and brand alignment.
+
+Accessibility & Performance
+- Touch targets meet WCAG 2.2 minimums (≥48x48) in mobile controls.
+- Lazy-loaded mobile menu continues to reduce initial JS footprint; transitions are GPU-friendly.
+- Contrast remains within WCAG AA.
+
+Testing Notes
+- Local preview verification performed. Next steps: cross-browser checks (Chrome, Safari, Firefox) and device testing (iOS/Android).
+
+Version Control Notes
+- v0.2.1: Mobile menu close and transitions, placeholder asset, background refinement; minimal, append-only CSS changes.
+
+---
+Button UX Enhancements — 2025-11-09 14:45 UTC (v0.2.2)
+
+Summary
+- Refined "Add to Cart" and "Buy Now" buttons with improved spacing, typography, transitions, accessibility, and mobile behavior.
+
+Design & Styles
+- Base `.btn`: 12x16 padding, 12px radius, min-height 48px, `font-weight: 600`, subtle letter-spacing, smooth 220ms transitions.
+- Primary CTA (`.btn.buy-now` / `.btn.primary`): high-contrast dark gradient, white text, soft shadow on hover.
+- Secondary CTA (`.btn.add-to-cart`): clean outline style that fills on hover for clear affordance.
+- Mobile: `.actions .btn` become full-width under 600px for comfortable touch targets.
+
+Accessibility
+- ARIA labels added: `Buy <title> now` for Buy Now, `Add to cart`/`Added to cart` for Add to Cart.
+- Feedback state sets `aria-disabled="true"` briefly after adding to cart to prevent accidental double taps.
+- Focus outlines preserved via `:focus-visible`.
+
+Implementation Details
+- Files:
+  - `app/globals.css`: upgraded `.btn` base and added variants `.buy-now` and `.add-to-cart`; refined transitions and mobile layout.
+  - `components/AddToCartButton.jsx`: added client state for temporary feedback, ARIA labels, and variant class.
+  - `components/ProductCard.jsx`, `components/Hero.jsx`, `app/product/[id]/page.jsx`: applied `buy-now` class and ARIA labels.
+- Tests:
+  - Added Vitest + RTL setup (`tests/setup.js`, package `vitest` config) and a unit test (`__tests__/AddToCartButton.test.jsx`) covering ARIA labels, class variants, and feedback state.
+
+Quality & Testing
+- WCAG AA contrast maintained for CTA buttons on light background.
+- Unit tests validate button behavior; manual validation planned across Chrome, Safari, Firefox, iOS, and Android.
+
+Version Control Notes
+- Feature branch: `feature/button-ui-enhancements` created for scoped work.
+- v0.2.2: Button UX and accessibility improvements; minimal, append-only modifications to CSS and targeted component updates.
