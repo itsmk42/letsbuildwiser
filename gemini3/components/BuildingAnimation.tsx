@@ -41,10 +41,13 @@ export default function BuildingAnimation() {
 
             // --- CONSTRUCTION TIMELINE ---
 
-            // PHASE 1: FOUNDATION (0 - 2)
-            tl.fromTo(".ground-line", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 0);
-            tl.fromTo(".foundation-block", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1 }, 0.5);
-            animateText(".text-1", 0.2, 2.5);
+            // PHASE 0: HERO FADE OUT (0 - 1)
+            tl.to(".hero-overlay", { opacity: 0, duration: 1, ease: "power2.inOut" }, 0);
+
+            // PHASE 1: FOUNDATION (0.5 - 2) - Starts slightly overlapping with hero fade
+            tl.fromTo(".foundation-block", { scaleX: 0 }, { scaleX: 1, duration: 1.5 }, 0.5);
+            tl.fromTo(".ground-line", { scaleX: 0 }, { scaleX: 1, duration: 1.5 }, 0.5);
+            animateText(".text-1", 0.5, 2);
 
             // PHASE 2: GROUND FLOOR (2 - 4.5)
             tl.fromTo(".gf-col", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1, stagger: 0.1 }, 2);
@@ -74,7 +77,9 @@ export default function BuildingAnimation() {
             tl.fromTo(".pool-water", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 12);
 
             // PHASE 7: FINAL REVEAL (13 - 14)
-            animateText(".text-5", 11.5, 3);
+            // Clear animation (fade out SVG) and show final text
+            tl.to(svgRef.current, { opacity: 0, duration: 1, ease: "power2.inOut" }, 12.5);
+            tl.to(".text-5", { opacity: 1, duration: 1, ease: "power2.out" }, 13);
 
             tl.to({}, { duration: 1 });
 
@@ -86,13 +91,29 @@ export default function BuildingAnimation() {
     return (
         <div ref={containerRef} className="relative w-full h-screen bg-black flex items-center justify-center overflow-hidden font-sans">
 
+            {/* --- HERO OVERLAY (Fades out on scroll) --- */}
+            <div className="hero-overlay absolute inset-0 z-50 flex flex-col items-center justify-center bg-black pointer-events-none">
+                <h1 className="text-6xl md:text-9xl font-bold text-white tracking-tighter text-center">
+                    Letsbuild <span className="text-[var(--color-gold)]">wiser</span>
+                </h1>
+                <p className="mt-6 text-xl text-gray-400 max-w-2xl text-center px-4">
+                    Civil Engineering Consultation & Construction
+                </p>
+                <div className="absolute bottom-10 animate-bounce text-gray-500">
+                    <span className="text-sm">Scroll to build</span>
+                    <div className="w-6 h-10 border-2 border-gray-500 rounded-full mx-auto mt-2 flex justify-center pt-2">
+                        <div className="w-1 h-2 bg-gray-500 rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
             {/* --- CIVIL ENGINEER BENEFITS TEXT OVERLAYS --- */}
             <div className="absolute inset-0 pointer-events-none z-40 flex flex-col justify-center items-center">
-                <div className="w-full max-w-7xl px-6 md:px-12 relative h-full flex flex-col justify-center">
+                <div className="w-full max-w-7xl px-4 md:px-12 relative h-full flex flex-col justify-center">
 
                     {/* Text 1 */}
                     <div className="text-1 absolute opacity-0 w-full flex justify-center md:justify-start">
-                        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-yellow-500/30 max-w-xl text-center md:text-left shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+                        <div className="max-w-[90vw] md:max-w-xl text-center md:text-left">
                             <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
                                 Structural<br className="hidden md:block" /> Safety
                             </h2>
@@ -105,7 +126,7 @@ export default function BuildingAnimation() {
 
                     {/* Text 2 */}
                     <div className="text-2 absolute opacity-0 w-full flex justify-center md:justify-end">
-                        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-yellow-500/30 max-w-xl text-center md:text-right flex flex-col items-center md:items-end shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+                        <div className="max-w-[90vw] md:max-w-xl text-center md:text-right flex flex-col items-center md:items-end">
                             <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
                                 Cost<br className="hidden md:block" /> Optimization
                             </h2>
@@ -118,7 +139,7 @@ export default function BuildingAnimation() {
 
                     {/* Text 3 */}
                     <div className="text-3 absolute opacity-0 w-full flex justify-center md:justify-start">
-                        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-yellow-500/30 max-w-xl text-center md:text-left shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+                        <div className="max-w-[90vw] md:max-w-xl text-center md:text-left">
                             <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
                                 Regulatory<br className="hidden md:block" /> Compliance
                             </h2>
@@ -131,7 +152,7 @@ export default function BuildingAnimation() {
 
                     {/* Text 4 */}
                     <div className="text-4 absolute opacity-0 w-full flex justify-center md:justify-end">
-                        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-yellow-500/30 max-w-xl text-center md:text-right flex flex-col items-center md:items-end shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+                        <div className="max-w-[90vw] md:max-w-xl text-center md:text-right flex flex-col items-center md:items-end">
                             <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
                                 Timely<br className="hidden md:block" /> Delivery
                             </h2>
@@ -144,7 +165,7 @@ export default function BuildingAnimation() {
 
                     {/* Text 5 */}
                     <div className="text-5 absolute opacity-0 w-full flex flex-col items-center justify-center">
-                        <h2 className="text-6xl md:text-9xl font-bold text-white tracking-tighter text-center">
+                        <h2 className="text-5xl md:text-9xl font-bold text-white tracking-tighter text-center">
                             Letsbuild <span className="text-yellow-500">wiser</span>
                         </h2>
                         <p className="mt-6 text-xl md:text-2xl text-white max-w-2xl text-center px-4">
