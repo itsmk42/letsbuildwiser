@@ -18,78 +18,64 @@ export default function BuildingAnimation() {
                 scrollTrigger: {
                     trigger: containerRef.current,
                     start: "top top",
-                    end: "+=1000%", // Moderate scroll length
-                    scrub: 1,
+                    end: "+=1200%",
+                    scrub: 0.5,
                     pin: true,
                     anticipatePin: 1,
                     invalidateOnRefresh: true,
                 },
             });
 
-            // --- TEXT ANIMATION SETUP (Left to Right Flow) ---
-            // Helper to animate text blocks: Enter from Left, Exit to Right
-            const animateText = (selector: string, startTime: number, duration: number) => {
-                // Enter
+            // --- TEXT ANIMATION (Elegant Fade & Slide) ---
+            const animateText = (selector: string, start: number, duration: number) => {
                 tl.fromTo(selector,
-                    { opacity: 0, x: -100 },
-                    { opacity: 1, x: 0, duration: duration * 0.2, ease: "power2.out" },
-                    startTime
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: duration * 0.3, ease: "power2.out" },
+                    start
                 );
-                // Hold (implicit)
-                // Exit
                 tl.to(selector,
-                    { opacity: 0, x: 100, duration: duration * 0.2, ease: "power2.in" },
-                    startTime + duration * 0.8
+                    { opacity: 0, y: -30, duration: duration * 0.3, ease: "power2.in" },
+                    start + duration * 0.7
                 );
             };
 
-            // --- CONSTRUCTION ANIMATION ---
+            // --- CONSTRUCTION TIMELINE ---
 
-            // 1. Site Prep & Foundation
+            // PHASE 1: FOUNDATION (0 - 2)
             tl.fromTo(".ground-line", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 0);
             tl.fromTo(".foundation-block", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1 }, 0.5);
+            animateText(".text-1", 0.2, 2.5);
 
-            animateText(".text-1", 0.5, 2); // "Foundation" text
+            // PHASE 2: GROUND FLOOR (2 - 4.5)
+            tl.fromTo(".gf-col", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1, stagger: 0.1 }, 2);
+            tl.fromTo(".gf-wall", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1.5, stagger: 0.2 }, 2.5);
+            tl.fromTo(".gf-slab", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 3.5);
+            animateText(".text-2", 2.5, 2.5);
 
-            // 2. Ground Floor Structure (Columns & Slab)
-            tl.fromTo(".gf-column",
-                { scaleY: 0, transformOrigin: "bottom" },
-                { scaleY: 1, duration: 1, stagger: 0.1 },
-                1.5
-            );
-            tl.fromTo(".gf-slab", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 2.5);
+            // PHASE 3: FIRST FLOOR (4.5 - 7)
+            tl.fromTo(".ff-col", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1, stagger: 0.1 }, 4.5);
+            tl.fromTo(".ff-wall", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1.5, stagger: 0.2 }, 5);
+            tl.fromTo(".cantilever-beam", { scaleX: 0, transformOrigin: "left" }, { scaleX: 1, duration: 1 }, 5.5);
+            tl.fromTo(".ff-slab", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 6);
+            animateText(".text-3", 5, 2.5);
 
-            animateText(".text-2", 2.5, 2); // "Structure" text
+            // PHASE 4: SECOND FLOOR (7 - 9)
+            tl.fromTo(".sf-col", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1, stagger: 0.1 }, 7);
+            tl.fromTo(".sf-wall", { scaleY: 0, transformOrigin: "bottom" }, { scaleY: 1, duration: 1.5, stagger: 0.2 }, 7.5);
+            tl.fromTo(".roof-slab", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 8.5);
 
-            // 3. First Floor & Roof
-            tl.fromTo(".ff-column",
-                { scaleY: 0, transformOrigin: "bottom" },
-                { scaleY: 1, duration: 1, stagger: 0.1 },
-                3.5
-            );
-            tl.fromTo(".roof-slab", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 4.5);
+            // PHASE 5: ENCLOSURE (9 - 11.5)
+            tl.fromTo(".glass-panel", { scaleY: 0, opacity: 0 }, { scaleY: 1, opacity: 1, duration: 1.5, stagger: 0.05 }, 9);
+            tl.fromTo(".timber-slat", { scaleY: 0 }, { scaleY: 1, duration: 1, stagger: 0.02 }, 10);
+            animateText(".text-4", 8, 3.5);
 
-            animateText(".text-3", 4.5, 2); // "Design" text
+            // PHASE 6: LANDSCAPE (11.5 - 13)
+            tl.fromTo(".landscape", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.5, stagger: 0.1, ease: "back.out(1.5)" }, 11.5);
+            tl.fromTo(".pool-water", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 12);
 
-            // 4. Walls & Windows (Fill in)
-            tl.fromTo(".wall-fill", { opacity: 0 }, { opacity: 1, duration: 2 }, 5.5);
-            tl.fromTo(".window-glass",
-                { scaleY: 0, transformOrigin: "top" },
-                { scaleY: 1, duration: 1.5, stagger: 0.1 },
-                6
-            );
+            // PHASE 7: FINAL REVEAL (13 - 14)
+            animateText(".text-5", 11.5, 3);
 
-            // 5. Landscape & Details
-            tl.fromTo(".landscape-tree",
-                { scale: 0, transformOrigin: "bottom" },
-                { scale: 1, duration: 1.5, stagger: 0.2, ease: "elastic.out(1, 0.5)" },
-                7.5
-            );
-            tl.fromTo(".pool-water", { scaleX: 0 }, { scaleX: 1, duration: 1 }, 8);
-
-            animateText(".text-4", 7.5, 2.5); // "Final" text
-
-            // Keep final state for a bit
             tl.to({}, { duration: 1 });
 
         }, containerRef);
@@ -98,127 +84,205 @@ export default function BuildingAnimation() {
     }, []);
 
     return (
-        <div ref={containerRef} className="relative w-full h-screen bg-black flex items-center justify-center overflow-hidden">
+        <div ref={containerRef} className="relative w-full h-screen bg-[#111] flex items-center justify-center overflow-hidden font-sans">
 
-            {/* --- TEXT OVERLAYS (Fixed Position, Animated via GSAP) --- */}
-            <div className="absolute inset-0 pointer-events-none z-40 flex flex-col items-center justify-center text-center px-6">
+            {/* --- MODERN PREMIUM SANS TEXT OVERLAYS --- */}
+            <div className="absolute inset-0 pointer-events-none z-40 flex flex-col justify-center px-4 md:px-32">
 
-                <div className="text-1 absolute opacity-0 max-w-4xl">
-                    <h2 className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">Solid Foundations</h2>
-                    <p className="text-2xl text-gray-300 font-light leading-relaxed">
-                        Every masterpiece begins with a plan. We lay the groundwork for luxury living.
+                {/* Text 1 */}
+                <div className="text-1 absolute opacity-0 w-full text-center md:text-left md:max-w-2xl">
+                    <h2 className="text-3xl md:text-8xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
+                        The Visionary<br className="hidden md:block" /> Foundation
+                    </h2>
+                    <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6 mx-auto md:mx-0"></div>
+                    <p className="text-sm md:text-2xl text-gray-300 font-medium leading-relaxed max-w-xs mx-auto md:mx-0 md:max-w-lg">
+                        Rooted in precision. Engineered to withstand the test of time.
                     </p>
                 </div>
 
-                <div className="text-2 absolute opacity-0 max-w-4xl">
-                    <h2 className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">Modern Structure</h2>
-                    <p className="text-2xl text-gray-300 font-light leading-relaxed">
-                        Open spaces, clean lines. Engineering that supports your lifestyle.
+                {/* Text 2 */}
+                <div className="text-2 absolute opacity-0 w-full text-center md:text-right md:max-w-2xl md:right-32 flex flex-col items-center md:items-end">
+                    <h2 className="text-3xl md:text-8xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
+                        Structural<br className="hidden md:block" /> Integrity
+                    </h2>
+                    <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6"></div>
+                    <p className="text-sm md:text-2xl text-gray-300 font-medium leading-relaxed max-w-xs md:max-w-lg">
+                        A symphony of steel and concrete. Open spaces that flow effortlessly.
                     </p>
                 </div>
 
-                <div className="text-3 absolute opacity-0 max-w-4xl">
-                    <h2 className="text-5xl md:text-7xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">Elegant Design</h2>
-                    <p className="text-2xl text-gray-300 font-light leading-relaxed">
-                        Form meets function. A home designed to inspire and endure.
+                {/* Text 3 */}
+                <div className="text-3 absolute opacity-0 w-full text-center md:text-left md:max-w-2xl">
+                    <h2 className="text-3xl md:text-8xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
+                        Defying<br className="hidden md:block" /> Gravity
+                    </h2>
+                    <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6 mx-auto md:mx-0"></div>
+                    <p className="text-sm md:text-2xl text-gray-300 font-medium leading-relaxed max-w-xs mx-auto md:mx-0 md:max-w-lg">
+                        Bold cantilevers push the boundaries of physics. Floating above the land.
                     </p>
                 </div>
 
-                <div className="text-4 absolute opacity-0 max-w-4xl">
-                    <h2 className="text-6xl md:text-8xl font-bold text-[var(--color-gold)] mb-4 tracking-tighter drop-shadow-lg">Lets Build Wiser</h2>
-                    <p className="text-3xl text-white font-light">
-                        Crafting Your Dream Villa.
+                {/* Text 4 */}
+                <div className="text-4 absolute opacity-0 w-full text-center md:text-right md:max-w-2xl md:right-32 flex flex-col items-center md:items-end">
+                    <h2 className="text-3xl md:text-8xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
+                        Material<br className="hidden md:block" /> Harmony
+                    </h2>
+                    <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6"></div>
+                    <p className="text-sm md:text-2xl text-gray-300 font-medium leading-relaxed max-w-xs md:max-w-lg">
+                        Warm timber meets cool glass. A curated palette of natural textures.
+                    </p>
+                </div>
+
+                {/* Text 5 */}
+                <div className="text-5 absolute opacity-0 w-full flex flex-col items-center justify-center">
+                    <h2 className="text-4xl md:text-9xl font-black text-white mb-4 tracking-tighter text-center uppercase">
+                        Lets Build <span className="text-yellow-500">Wiser</span>
+                    </h2>
+                    <p className="text-lg md:text-3xl text-white font-bold tracking-widest uppercase">
+                        The Future of Living
                     </p>
                 </div>
 
             </div>
 
-            {/* --- SVG SCENE --- */}
+            {/* --- ULTRA-REALISTIC SVG SCENE --- */}
             <svg
                 ref={svgRef}
-                viewBox="0 0 1200 800"
-                className="w-full h-full max-w-[95vw] max-h-[80vh] z-10"
+                viewBox="0 0 2000 1000"
+                className="w-full h-full z-10"
                 preserveAspectRatio="xMidYMid meet"
             >
                 <defs>
-                    <linearGradient id="sky-grad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#1a1a1a" />
-                        <stop offset="100%" stopColor="#000" />
+                    {/* Realistic Concrete Texture */}
+                    <pattern id="concrete" patternUnits="userSpaceOnUse" width="100" height="100">
+                        <rect width="100" height="100" fill="#2a2a2a" />
+                        <filter id="noise">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                        </filter>
+                        <rect width="100" height="100" fill="transparent" opacity="0.1" filter="url(#noise)" />
+                    </pattern>
+
+                    {/* Realistic Wood Texture */}
+                    <pattern id="wood" patternUnits="userSpaceOnUse" width="20" height="100">
+                        <rect width="20" height="100" fill="#3e2723" />
+                        <line x1="0" y1="0" x2="0" y2="100" stroke="#281815" strokeWidth="1" />
+                        <line x1="10" y1="0" x2="10" y2="100" stroke="#4e342e" strokeWidth="0.5" opacity="0.5" />
+                    </pattern>
+
+                    {/* Glass Reflection Gradient */}
+                    <linearGradient id="glass-real" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stopColor="rgba(255,255,255,0.2)" />
+                        <stop offset="40%" stopColor="rgba(200,220,255,0.1)" />
+                        <stop offset="60%" stopColor="rgba(200,220,255,0.05)" />
+                        <stop offset="100%" stopColor="rgba(0,0,0,0.1)" />
                     </linearGradient>
-                    <linearGradient id="glass-grad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="rgba(135, 206, 235, 0.6)" />
-                        <stop offset="100%" stopColor="rgba(0, 100, 200, 0.3)" />
-                    </linearGradient>
-                    <filter id="glow">
-                        <feGaussianBlur stdDeviation="2.5" result="coloredBlur" />
+
+                    {/* Pool Water Caustics */}
+                    <pattern id="water" patternUnits="userSpaceOnUse" width="50" height="50">
+                        <rect width="50" height="50" fill="#006994" />
+                        <path d="M0,25 Q12.5,10 25,25 T50,25" stroke="rgba(255,255,255,0.1)" fill="none" />
+                    </pattern>
+
+                    {/* Drop Shadow for Depth */}
+                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
+                        <feOffset dx="5" dy="5" result="offsetblur" />
+                        <feComponentTransfer>
+                            <feFuncA type="linear" slope="0.5" />
+                        </feComponentTransfer>
                         <feMerge>
-                            <feMergeNode in="coloredBlur" />
+                            <feMergeNode />
                             <feMergeNode in="SourceGraphic" />
                         </feMerge>
                     </filter>
                 </defs>
 
-                {/* Ground */}
-                <line x1="0" y1="600" x2="1200" y2="600" stroke="#444" strokeWidth="2" className="ground-line" />
+                {/* Ground & Atmosphere */}
+                <rect width="2000" height="1000" fill="#111" />
+                <line x1="0" y1="850" x2="2000" y2="850" stroke="#333" strokeWidth="2" className="ground-line" />
 
                 {/* Foundation */}
-                <rect x="200" y="600" width="800" height="40" fill="#222" stroke="#333" className="foundation-block" />
+                <rect x="100" y="850" width="1800" height="100" fill="url(#concrete)" className="foundation-block" filter="url(#shadow)" />
 
                 {/* --- GROUND FLOOR --- */}
                 <g className="gf-group">
-                    {/* Columns */}
-                    <rect x="220" y="450" width="20" height="150" fill="#333" className="gf-column" />
-                    <rect x="400" y="450" width="20" height="150" fill="#333" className="gf-column" />
-                    <rect x="600" y="450" width="20" height="150" fill="#333" className="gf-column" />
-                    <rect x="960" y="450" width="20" height="150" fill="#333" className="gf-column" />
+                    {/* Walls with Concrete Texture */}
+                    <rect x="200" y="650" width="300" height="200" fill="url(#concrete)" className="gf-wall" filter="url(#shadow)" />
+                    <rect x="220" y="670" width="260" height="180" fill="#1a1a1a" className="gf-wall" /> {/* Dark Garage Door */}
 
-                    {/* Walls (Fill) */}
-                    <rect x="240" y="450" width="160" height="150" fill="#1a1a1a" className="wall-fill" />
-                    <rect x="620" y="450" width="340" height="150" fill="#1a1a1a" className="wall-fill" />
+                    <rect x="550" y="450" width="300" height="400" fill="#1a1a1a" className="gf-wall" /> {/* Entry Void */}
+
+                    <rect x="900" y="600" width="800" height="250" fill="url(#concrete)" className="gf-wall" filter="url(#shadow)" />
+
+                    {/* Columns */}
+                    <rect x="550" y="450" width="20" height="400" fill="#222" className="gf-col" />
+                    <rect x="830" y="450" width="20" height="400" fill="#222" className="gf-col" />
+                    <rect x="900" y="600" width="20" height="250" fill="#222" className="gf-col" />
+                    <rect x="1300" y="600" width="20" height="250" fill="#222" className="gf-col" />
+                    <rect x="1680" y="600" width="20" height="250" fill="#222" className="gf-col" />
 
                     {/* Slab */}
-                    <rect x="200" y="430" width="800" height="20" fill="#444" className="gf-slab" />
+                    <rect x="180" y="630" width="1540" height="20" fill="#333" className="gf-slab" />
                 </g>
 
                 {/* --- FIRST FLOOR --- */}
                 <g className="ff-group">
-                    {/* Columns */}
-                    <rect x="220" y="280" width="20" height="150" fill="#333" className="ff-column" />
-                    <rect x="600" y="280" width="20" height="150" fill="#333" className="ff-column" />
-                    <rect x="960" y="280" width="20" height="150" fill="#333" className="ff-column" />
+                    <rect x="150" y="430" width="450" height="200" fill="url(#concrete)" className="ff-wall" filter="url(#shadow)" />
+                    <rect x="150" y="630" width="450" height="15" fill="#444" className="cantilever-beam" />
 
-                    {/* Walls (Fill) */}
-                    <rect x="240" y="280" width="360" height="150" fill="#1a1a1a" className="wall-fill" />
-                    <rect x="620" y="280" width="340" height="150" fill="#1a1a1a" className="wall-fill" />
+                    <rect x="950" y="430" width="700" height="200" fill="url(#concrete)" className="ff-wall" filter="url(#shadow)" />
 
-                    {/* Roof Slab (Overhang) */}
-                    <rect x="180" y="260" width="840" height="20" fill="#555" className="roof-slab" />
+                    <rect x="580" y="430" width="20" height="200" fill="#222" className="ff-col" />
+                    <rect x="950" y="430" width="20" height="200" fill="#222" className="ff-col" />
+                    <rect x="1630" y="430" width="20" height="200" fill="#222" className="ff-col" />
+
+                    <rect x="150" y="410" width="1500" height="20" fill="#333" className="ff-slab" />
                 </g>
 
-                {/* --- WINDOWS --- */}
-                <g className="windows-group">
-                    {/* GF Windows */}
-                    <rect x="440" y="460" width="140" height="120" fill="url(#glass-grad)" className="window-glass" />
+                {/* --- SECOND FLOOR --- */}
+                <g className="sf-group">
+                    <rect x="800" y="210" width="600" height="200" fill="url(#concrete)" className="sf-wall" filter="url(#shadow)" />
+                    <rect x="800" y="210" width="15" height="200" fill="#222" className="sf-col" />
+                    <rect x="1385" y="210" width="15" height="200" fill="#222" className="sf-col" />
+                    <rect x="700" y="190" width="800" height="20" fill="#444" className="roof-slab" />
+                </g>
 
-                    {/* FF Windows */}
-                    <rect x="260" y="300" width="120" height="110" fill="url(#glass-grad)" className="window-glass" />
-                    <rect x="440" y="300" width="140" height="110" fill="url(#glass-grad)" className="window-glass" />
-                    <rect x="640" y="300" width="300" height="110" fill="url(#glass-grad)" className="window-glass" />
+                {/* --- DETAILS --- */}
+                <g className="details-group">
+                    {/* Realistic Glass Panels */}
+                    <rect x="570" y="450" width="260" height="400" fill="url(#glass-real)" className="glass-panel" opacity="0.6" />
+                    <rect x="920" y="620" width="760" height="230" fill="url(#glass-real)" className="glass-panel" opacity="0.7" />
+                    <rect x="150" y="450" width="300" height="160" fill="url(#glass-real)" className="glass-panel" opacity="0.7" />
+                    <rect x="820" y="230" width="560" height="160" fill="url(#glass-real)" className="glass-panel" opacity="0.7" />
+
+                    {/* Timber Slats */}
+                    {Array.from({ length: 12 }).map((_, i) => (
+                        <rect key={i} x={460 + i * 10} y="430" width="6" height="200" fill="url(#wood)" className="timber-slat" />
+                    ))}
                 </g>
 
                 {/* --- LANDSCAPE --- */}
                 <g className="landscape-group">
-                    {/* Pool (Left) */}
-                    <rect x="50" y="610" width="150" height="10" fill="#00d4ff" className="pool-water" opacity="0.6" />
+                    {/* Pool with Water Texture */}
+                    <rect x="1200" y="860" width="600" height="40" fill="url(#water)" className="pool-water" opacity="0.8" />
 
-                    {/* Trees (Right) */}
-                    <g transform="translate(1050, 600)" className="landscape-tree">
-                        <line x1="0" y1="0" x2="0" y2="-60" stroke="#4a3728" strokeWidth="4" />
-                        <circle cx="0" cy="-80" r="30" fill="#2d4a3e" />
+                    {/* Stylized Trees */}
+                    <g transform="translate(50, 850)" className="landscape">
+                        <line x1="0" y1="0" x2="0" y2="-120" stroke="#333" strokeWidth="4" />
+                        <circle cx="0" cy="-130" r="40" fill="#222" opacity="0.9" />
+                        <circle cx="-20" cy="-110" r="30" fill="#1a1a1a" opacity="0.8" />
+                        <circle cx="20" cy="-110" r="30" fill="#1a1a1a" opacity="0.8" />
                     </g>
-                    <g transform="translate(1120, 600)" className="landscape-tree">
-                        <line x1="0" y1="0" x2="0" y2="-40" stroke="#4a3728" strokeWidth="3" />
-                        <circle cx="0" cy="-50" r="20" fill="#2d4a3e" />
+                    <g transform="translate(1900, 850)" className="landscape">
+                        <line x1="0" y1="0" x2="0" y2="-100" stroke="#333" strokeWidth="4" />
+                        <circle cx="0" cy="-110" r="35" fill="#222" opacity="0.9" />
+                    </g>
+
+                    {/* Roof Garden */}
+                    <g transform="translate(750, 190)" className="landscape">
+                        <path d="M0,0 Q10,-20 20,0 T40,0" stroke="#4a6741" strokeWidth="2" fill="none" />
+                        <circle cx="10" cy="-15" r="5" fill="#4a6741" />
+                        <circle cx="30" cy="-10" r="8" fill="#4a6741" />
                     </g>
                 </g>
 
