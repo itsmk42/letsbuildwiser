@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Civil Engineering | Building the Future</title>
+    <style>
+        :root {
+            --color-accent: #00d4ff;
+            --color-text: #ffffff;
+            --color-bg: #050505;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--color-bg);
+            color: var(--color-text);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
+            height: 500vh; /* Scrollable height */
+        }
+
+        /* Canvas Container */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+        }
+
+        /* UI Overlay */
+        .overlay {
+            position: relative;
+            z-index: 1;
+            pointer-events: none; /* Let scroll pass through */
+        }
+
+        section {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 10%;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease, transform 1s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 {
+            font-size: 5rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #fff, var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        h2 {
+            font-size: 3rem;
+            font-weight: 300;
+            margin-bottom: 1rem;
+            color: var(--color-accent);
+        }
+
+        p {
+            font-size: 1.5rem;
+            line-height: 1.6;
+            max-width: 600px;
+            color: rgba(255, 255, 255, 0.8);
+            border-left: 4px solid var(--color-accent);
+            padding-left: 20px;
+        }
+
+        .scroll-indicator {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            opacity: 0.7;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+
+        /* Loading Screen */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--color-accent);
+            font-size: 2rem;
+            font-weight: bold;
+            transition: opacity 0.5s;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">INITIALIZING BLUEPRINT...</div>
+
+    <div id="canvas-container"></div>
+
+    <div class="overlay">
+        <section id="sec-intro">
+            <h1>Apex Civil</h1>
+            <p>Engineering the skyline of tomorrow. From concept to concrete, we build with precision.</p>
+        </section>
+
+        <section id="sec-foundation">
+            <h2>The Foundation</h2>
+            <p>Every monument begins in the deep. Our geotechnical expertise ensures stability for centuries to come.</p>
+        </section>
+
+        <section id="sec-structure">
+            <h2>Structural Integrity</h2>
+            <p>Steel and concrete woven together. Our designs withstand the forces of nature with grace and resilience.</p>
+        </section>
+
+        <section id="sec-vision">
+            <h2>The Vision Realized</h2>
+            <p>Turning blueprints into landmarks. Apex Civil Engineering: Where imagination meets reality.</p>
+        </section>
+        
+        <section style="height: 50vh;">
+            <!-- Spacer for final scroll -->
+        </section>
+    </div>
+
+    <div class="scroll-indicator">
+        <span>Scroll to Build</span>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+        </svg>
+    </div>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // --- CONFIGURATION ---
+        const FLOORS = 40;
+        const FLOOR_HEIGHT = 4;
+        const BUILDING_WIDTH = 20;
+        const BUILDING_DEPTH = 20;
+        
+        // --- SCENE SETUP ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        // Fog for depth and "Golden Hour" atmosphere
+        scene.fog = new THREE.FogExp2(0x050505, 0.015);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        container.appendChild(renderer.domElement);
+
+        // --- LIGHTING ---
+        const ambientLight = new THREE.AmbientLight(0x404040, 1.5); // Soft white light
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffaa00, 2); // Golden sun
+        dirLight.position.set(50, 100, 50);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 2048;
+        dirLight.shadow.mapSize.height = 2048;
+        scene.add(dirLight);
+
+        const blueLight = new THREE.PointLight(0x00d4ff, 1, 100); // Cyan accent
+        blueLight.position.set(-20, 10, -20);
+        scene.add(blueLight);
+
+        // --- MATERIALS ---
+        // 1. Concrete (Solid)
+        const concreteMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x333333, 
+            roughness: 0.9,
+            metalness: 0.1
+        });
+
+        // 2. Glass (Solid)
+        const glassMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0x88ccff,
+            metalness: 0.9,
+            roughness: 0.1,
+            transparent: true,
+            opacity: 0.6,
+            transmission: 0.5
+        });
+
+        // 3. Blueprint (Wireframe)
+        const blueprintMaterial = new THREE.LineBasicMaterial({ 
+            color: 0x00d4ff, 
+            transparent: true, 
+            opacity: 0.8,
+            linewidth: 2 
+        });
+
+        // --- BUILDING GENERATION ---
+        const buildingGroup = new THREE.Group();
+        scene.add(buildingGroup);
+
+        const floors = [];
+
+        // Helper to create a floor
+        function createFloor(yPos) {
+            const floorGroup = new THREE.Group();
+            floorGroup.position.y = yPos;
+
+            // Slab
+            const slabGeo = new THREE.BoxGeometry(BUILDING_WIDTH, 0.5, BUILDING_DEPTH);
+            const slabMesh = new THREE.Mesh(slabGeo, concreteMaterial);
+            slabMesh.castShadow = true;
+            slabMesh.receiveShadow = true;
+            floorGroup.add(slabMesh);
+
+            // Wireframe version of Slab
+            const slabEdges = new THREE.EdgesGeometry(slabGeo);
+            const slabLines = new THREE.LineSegments(slabEdges, blueprintMaterial);
+            slabLines.visible = false; // Hidden initially
+            floorGroup.add(slabLines);
+
+            // Pillars (4 corners)
+            const pillarGeo = new THREE.BoxGeometry(1, FLOOR_HEIGHT, 1);
+            const positions = [
+                [-BUILDING_WIDTH/2 + 1, FLOOR_HEIGHT/2, -BUILDING_DEPTH/2 + 1],
+                [BUILDING_WIDTH/2 - 1, FLOOR_HEIGHT/2, -BUILDING_DEPTH/2 + 1],
+                [-BUILDING_WIDTH/2 + 1, FLOOR_HEIGHT/2, BUILDING_DEPTH/2 - 1],
+                [BUILDING_WIDTH/2 - 1, FLOOR_HEIGHT/2, BUILDING_DEPTH/2 - 1]
+            ];
+
+            positions.forEach(pos => {
+                const pillar = new THREE.Mesh(pillarGeo, concreteMaterial);
+                pillar.position.set(...pos);
+                pillar.castShadow = true;
+                floorGroup.add(pillar);
+
+                const pEdges = new THREE.EdgesGeometry(pillarGeo);
+                const pLines = new THREE.LineSegments(pEdges, blueprintMaterial);
+                pLines.position.set(...pos);
+                pLines.visible = false;
+                floorGroup.add(pLines);
+            });
+
+            // Glass Facade (Simple planes)
+            const glassGeo = new THREE.BoxGeometry(BUILDING_WIDTH - 0.5, FLOOR_HEIGHT - 0.5, BUILDING_DEPTH - 0.5);
+            const glassMesh = new THREE.Mesh(glassGeo, glassMaterial);
+            glassMesh.position.y = FLOOR_HEIGHT / 2;
+            floorGroup.add(glassMesh);
+
+            const gEdges = new THREE.EdgesGeometry(glassGeo);
+            const gLines = new THREE.LineSegments(gEdges, blueprintMaterial);
+            gLines.position.y = FLOOR_HEIGHT / 2;
+            gLines.visible = false;
+            floorGroup.add(gLines);
+
+            // Store references for animation
+            floors.push({
+                group: floorGroup,
+                solidMeshes: [slabMesh, glassMesh, ...floorGroup.children.filter(c => c.geometry === pillarGeo)],
+                wireMeshes: [slabLines, gLines, ...floorGroup.children.filter(c => c.type === 'LineSegments')]
+            });
+
+            buildingGroup.add(floorGroup);
+        }
+
+        // Generate Floors
+        for (let i = 0; i < FLOORS; i++) {
+            createFloor(i * FLOOR_HEIGHT);
+        }
+
+        // --- CRANE ---
+        const craneGroup = new THREE.Group();
+        scene.add(craneGroup);
+        
+        // Mast
+        const mastGeo = new THREE.BoxGeometry(2, 10, 2);
+        const mast = new THREE.Mesh(mastGeo, new THREE.MeshStandardMaterial({ color: 0xffaa00 })); // Yellow crane
+        mast.position.y = 5;
+        craneGroup.add(mast);
+        
+        // Jib
+        const jibGeo = new THREE.BoxGeometry(20, 1, 1);
+        const jib = new THREE.Mesh(jibGeo, new THREE.MeshStandardMaterial({ color: 0xffaa00 }));
+        jib.position.set(5, 10, 0);
+        craneGroup.add(jib);
+
+        // --- ANIMATION STATE ---
+        let scrollPercent = 0;
+
+        function updateBuilding() {
+            // Calculate current floor based on scroll
+            const currentFloorIndex = Math.floor(scrollPercent * FLOORS);
+            
+            floors.forEach((floor, index) => {
+                if (index < currentFloorIndex) {
+                    // COMPLETED FLOORS: Solid visible, Wireframe hidden
+                    floor.group.visible = true;
+                    floor.solidMeshes.forEach(m => m.visible = true);
+                    floor.wireMeshes.forEach(m => m.visible = false);
+                } else if (index === currentFloorIndex) {
+                    // CURRENT FLOOR: Wireframe visible, Solid hidden (Blueprint effect)
+                    floor.group.visible = true;
+                    floor.solidMeshes.forEach(m => m.visible = false);
+                    floor.wireMeshes.forEach(m => m.visible = true);
+                } else {
+                    // FUTURE FLOORS: Hidden
+                    floor.group.visible = false;
+                }
+            });
+
+            // Move Crane to top of current floor
+            const craneY = (currentFloorIndex * FLOOR_HEIGHT) + FLOOR_HEIGHT;
+            craneGroup.position.y = craneY;
+            craneGroup.rotation.y += 0.01; // Rotate crane slowly
+        }
+
+        function updateCamera() {
+            // Spiral movement
+            const angle = scrollPercent * Math.PI * 2; // 1 full rotation
+            const radius = 40 + (scrollPercent * 10); // Pull back slightly as we go up
+            const height = (scrollPercent * FLOORS * FLOOR_HEIGHT) + 10; // Look at current level
+
+            camera.position.x = Math.cos(angle) * radius;
+            camera.position.z = Math.sin(angle) * radius;
+            camera.position.y = height + 20; // Look slightly down
+            
+            // Look at the center of the building at current height
+            camera.lookAt(0, height, 0);
+        }
+
+        // --- SCROLL HANDLER ---
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.body.scrollHeight - window.innerHeight;
+            scrollPercent = Math.max(0, Math.min(1, scrollTop / docHeight));
+            
+            // Reveal Text Sections
+            document.querySelectorAll('section').forEach(sec => {
+                const rect = sec.getBoundingClientRect();
+                if (rect.top < window.innerHeight * 0.75) {
+                    sec.classList.add('visible');
+                }
+            });
+        });
+
+        // --- RENDER LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            updateBuilding();
+            updateCamera();
+            
+            renderer.render(scene, camera);
+        }
+
+        // --- INIT ---
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Remove loader
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => document.getElementById('loader').remove(), 500);
+            }, 1000);
+        };
+
+        animate();
+
+    </script>
+</body>
+</html>
