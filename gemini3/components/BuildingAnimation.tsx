@@ -18,7 +18,7 @@ export default function BuildingAnimation() {
                 scrollTrigger: {
                     trigger: containerRef.current,
                     start: "top top",
-                    end: "+=1200%",
+                    end: "+=800%",
                     scrub: 0.5,
                     pin: true,
                     anticipatePin: 1,
@@ -87,65 +87,75 @@ export default function BuildingAnimation() {
         <div ref={containerRef} className="relative w-full h-screen bg-black flex items-center justify-center overflow-hidden font-sans">
 
             {/* --- CIVIL ENGINEER BENEFITS TEXT OVERLAYS --- */}
-            <div className="absolute inset-0 pointer-events-none z-40 flex flex-col justify-center px-4 md:px-32">
+            <div className="absolute inset-0 pointer-events-none z-40 flex flex-col justify-center items-center">
+                <div className="w-full max-w-7xl px-6 md:px-12 relative h-full flex flex-col justify-center">
 
-                {/* Text 1 */}
-                <div className="text-1 absolute opacity-0 w-full text-center md:text-left md:max-w-2xl">
-                    <h2 className="text-3xl md:text-8xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
-                        Structural<br className="hidden md:block" /> Safety
-                    </h2>
-                    <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6 mx-auto md:mx-0"></div>
-                    <p className="text-sm md:text-2xl text-gray-300 font-medium leading-relaxed max-w-xs mx-auto md:mx-0 md:max-w-lg">
-                        We prioritize your safety above all. Rigorous calculations and stress testing ensure a home that stands strong for generations.
-                    </p>
+                    {/* Text 1 */}
+                    <div className="text-1 absolute opacity-0 w-full flex justify-center md:justify-start">
+                        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-yellow-500/30 max-w-xl text-center md:text-left shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+                            <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
+                                Structural<br className="hidden md:block" /> Safety
+                            </h2>
+                            <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6 mx-auto md:mx-0 shadow-[0_0_10px_rgba(234,179,8,0.5)]"></div>
+                            <p className="text-sm md:text-xl text-white font-medium leading-relaxed">
+                                We prioritize your safety above all. Rigorous calculations and stress testing ensure a home that stands strong for generations.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Text 2 */}
+                    <div className="text-2 absolute opacity-0 w-full flex justify-center md:justify-end">
+                        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-yellow-500/30 max-w-xl text-center md:text-right flex flex-col items-center md:items-end shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+                            <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
+                                Cost<br className="hidden md:block" /> Optimization
+                            </h2>
+                            <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6 shadow-[0_0_10px_rgba(234,179,8,0.5)]"></div>
+                            <p className="text-sm md:text-xl text-white font-medium leading-relaxed">
+                                Smart engineering saves money. We optimize material usage and construction methods to deliver premium quality within budget.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Text 3 */}
+                    <div className="text-3 absolute opacity-0 w-full flex justify-center md:justify-start">
+                        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-yellow-500/30 max-w-xl text-center md:text-left shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+                            <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
+                                Regulatory<br className="hidden md:block" /> Compliance
+                            </h2>
+                            <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6 mx-auto md:mx-0 shadow-[0_0_10px_rgba(234,179,8,0.5)]"></div>
+                            <p className="text-sm md:text-xl text-white font-medium leading-relaxed">
+                                Navigate approvals with ease. Our designs adhere strictly to all local building codes and zoning regulations.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Text 4 */}
+                    <div className="text-4 absolute opacity-0 w-full flex justify-center md:justify-end">
+                        <div className="bg-black/60 backdrop-blur-md rounded-xl p-6 border border-yellow-500/30 max-w-xl text-center md:text-right flex flex-col items-center md:items-end shadow-[0_0_30px_rgba(234,179,8,0.1)]">
+                            <h2 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
+                                Timely<br className="hidden md:block" /> Delivery
+                            </h2>
+                            <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6 shadow-[0_0_10px_rgba(234,179,8,0.5)]"></div>
+                            <p className="text-sm md:text-xl text-white font-medium leading-relaxed">
+                                Efficient project management means no delays. We respect your time and ensure your dream home is ready when promised.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Text 5 */}
+                    <div className="text-5 absolute opacity-0 w-full flex flex-col items-center justify-center">
+                        <h2 className="text-6xl md:text-9xl font-bold text-white tracking-tighter text-center">
+                            Letsbuild <span className="text-yellow-500">wiser</span>
+                        </h2>
+                        <p className="mt-6 text-xl md:text-2xl text-white max-w-2xl text-center px-4">
+                            Civil Engineering Consultation & Construction
+                        </p>
+                    </div>
+
                 </div>
-
-                {/* Text 2 */}
-                <div className="text-2 absolute opacity-0 w-full text-center md:text-right md:max-w-2xl md:right-32 flex flex-col items-center md:items-end">
-                    <h2 className="text-3xl md:text-8xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
-                        Cost<br className="hidden md:block" /> Optimization
-                    </h2>
-                    <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6"></div>
-                    <p className="text-sm md:text-2xl text-gray-300 font-medium leading-relaxed max-w-xs md:max-w-lg">
-                        Smart engineering saves money. We optimize material usage and construction methods to deliver premium quality within budget.
-                    </p>
-                </div>
-
-                {/* Text 3 */}
-                <div className="text-3 absolute opacity-0 w-full text-center md:text-left md:max-w-2xl">
-                    <h2 className="text-3xl md:text-8xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
-                        Regulatory<br className="hidden md:block" /> Compliance
-                    </h2>
-                    <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6 mx-auto md:mx-0"></div>
-                    <p className="text-sm md:text-2xl text-gray-300 font-medium leading-relaxed max-w-xs mx-auto md:mx-0 md:max-w-lg">
-                        Navigate approvals with ease. Our designs adhere strictly to all local building codes and zoning regulations.
-                    </p>
-                </div>
-
-                {/* Text 4 */}
-                <div className="text-4 absolute opacity-0 w-full text-center md:text-right md:max-w-2xl md:right-32 flex flex-col items-center md:items-end">
-                    <h2 className="text-3xl md:text-8xl font-bold text-white mb-4 md:mb-6 tracking-tighter">
-                        Timely<br className="hidden md:block" /> Delivery
-                    </h2>
-                    <div className="w-12 h-1 md:w-20 md:h-2 bg-yellow-500 mb-4 md:mb-6"></div>
-                    <p className="text-sm md:text-2xl text-gray-300 font-medium leading-relaxed max-w-xs md:max-w-lg">
-                        Efficient project management means no delays. We respect your time and ensure your dream home is ready when promised.
-                    </p>
-                </div>
-
-                {/* Text 5 */}
-                <div className="text-5 absolute opacity-0 w-full flex flex-col items-center justify-center">
-                    <h2 className="text-4xl md:text-9xl font-black text-white mb-4 tracking-tighter text-center uppercase">
-                        Lets Build <span className="text-yellow-500">Wiser</span>
-                    </h2>
-                    <p className="text-lg md:text-3xl text-white font-bold tracking-widest uppercase">
-                        Engineering Your Peace of Mind
-                    </p>
-                </div>
-
             </div>
 
-            {/* --- ULTRA-REALISTIC SVG SCENE (Grey Theme) --- */}
+            {/* --- ULTRA-HYPER-REALISTIC SVG SCENE --- */}
             <svg
                 ref={svgRef}
                 viewBox="0 0 2000 1000"
@@ -153,42 +163,56 @@ export default function BuildingAnimation() {
                 preserveAspectRatio="xMidYMid meet"
             >
                 <defs>
-                    {/* Concrete Texture (Grey) */}
-                    <pattern id="concrete" patternUnits="userSpaceOnUse" width="100" height="100">
-                        <rect width="100" height="100" fill="#444" /> {/* Lighter Grey */}
-                        <filter id="noise">
-                            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+                    {/* Hyper-Realistic Concrete */}
+                    <pattern id="concrete" patternUnits="userSpaceOnUse" width="200" height="200">
+                        <rect width="200" height="200" fill="#444" />
+                        <filter id="concrete-noise">
+                            <feTurbulence type="fractalNoise" baseFrequency="0.6" numOctaves="4" stitchTiles="stitch" />
+                            <feColorMatrix type="saturate" values="0" />
                         </filter>
-                        <rect width="100" height="100" fill="transparent" opacity="0.1" filter="url(#noise)" />
+                        <rect width="200" height="200" fill="transparent" opacity="0.15" filter="url(#concrete-noise)" />
+                        {/* Micro-cracks/details */}
+                        <path d="M20,20 L30,30 M150,150 L160,140" stroke="#333" strokeWidth="0.5" opacity="0.3" />
                     </pattern>
 
-                    {/* Wood Texture (Desaturated/Greyish) */}
-                    <pattern id="wood" patternUnits="userSpaceOnUse" width="20" height="100">
-                        <rect width="20" height="100" fill="#555" />
-                        <line x1="0" y1="0" x2="0" y2="100" stroke="#333" strokeWidth="1" />
-                        <line x1="10" y1="0" x2="10" y2="100" stroke="#444" strokeWidth="0.5" opacity="0.5" />
+                    {/* Hyper-Realistic Wood */}
+                    <pattern id="wood" patternUnits="userSpaceOnUse" width="40" height="200">
+                        <rect width="40" height="200" fill="#555" />
+                        <line x1="0" y1="0" x2="0" y2="200" stroke="#333" strokeWidth="1" />
+                        <line x1="20" y1="0" x2="20" y2="200" stroke="#444" strokeWidth="0.5" opacity="0.5" />
+                        {/* Wood grain */}
+                        <path d="M5,0 Q10,50 5,100 T5,200" stroke="#444" strokeWidth="0.5" opacity="0.3" fill="none" />
+                        <path d="M25,0 Q30,50 25,100 T25,200" stroke="#444" strokeWidth="0.5" opacity="0.3" fill="none" />
                     </pattern>
 
-                    {/* Glass Reflection Gradient (Grey/Blue Tint) */}
+                    {/* Advanced Glass Reflection */}
                     <linearGradient id="glass-real" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stopColor="rgba(200,200,200,0.2)" />
-                        <stop offset="40%" stopColor="rgba(150,150,150,0.1)" />
-                        <stop offset="60%" stopColor="rgba(150,150,150,0.05)" />
-                        <stop offset="100%" stopColor="rgba(0,0,0,0.1)" />
+                        <stop offset="0%" stopColor="rgba(220,220,220,0.15)" />
+                        <stop offset="30%" stopColor="rgba(180,180,180,0.05)" />
+                        <stop offset="50%" stopColor="rgba(180,180,180,0.02)" />
+                        <stop offset="70%" stopColor="rgba(180,180,180,0.05)" />
+                        <stop offset="100%" stopColor="rgba(100,100,100,0.1)" />
                     </linearGradient>
 
-                    {/* Pool Water (Darker/Greyscale) */}
-                    <pattern id="water" patternUnits="userSpaceOnUse" width="50" height="50">
-                        <rect width="50" height="50" fill="#222" />
-                        <path d="M0,25 Q12.5,10 25,25 T50,25" stroke="rgba(255,255,255,0.05)" fill="none" />
+                    {/* Night Sky Gradient */}
+                    <linearGradient id="night-sky" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#050505" />
+                        <stop offset="100%" stopColor="#000000" />
+                    </linearGradient>
+
+                    {/* Pool Water with Depth */}
+                    <pattern id="water" patternUnits="userSpaceOnUse" width="100" height="100">
+                        <rect width="100" height="100" fill="#1a1a1a" />
+                        <path d="M0,50 Q25,40 50,50 T100,50" stroke="rgba(255,255,255,0.03)" fill="none" strokeWidth="2" />
+                        <path d="M0,20 Q25,30 50,20 T100,20" stroke="rgba(255,255,255,0.02)" fill="none" strokeWidth="1" />
                     </pattern>
 
-                    {/* Drop Shadow for Depth */}
-                    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                        <feGaussianBlur in="SourceAlpha" stdDeviation="5" />
-                        <feOffset dx="5" dy="5" result="offsetblur" />
+                    {/* Soft Shadow */}
+                    <filter id="soft-shadow" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="8" />
+                        <feOffset dx="8" dy="8" result="offsetblur" />
                         <feComponentTransfer>
-                            <feFuncA type="linear" slope="0.5" />
+                            <feFuncA type="linear" slope="0.4" />
                         </feComponentTransfer>
                         <feMerge>
                             <feMergeNode />
@@ -197,22 +221,19 @@ export default function BuildingAnimation() {
                     </filter>
                 </defs>
 
-                {/* Ground & Atmosphere (Pure Black) */}
-                <rect width="2000" height="1000" fill="#000000" />
-                <line x1="0" y1="850" x2="2000" y2="850" stroke="#333" strokeWidth="2" className="ground-line" />
+                {/* Background */}
+                <rect width="2000" height="1000" fill="url(#night-sky)" />
+                <line x1="0" y1="850" x2="2000" y2="850" stroke="#222" strokeWidth="2" className="ground-line" />
 
                 {/* Foundation */}
-                <rect x="100" y="850" width="1800" height="100" fill="url(#concrete)" className="foundation-block" filter="url(#shadow)" />
+                <rect x="100" y="850" width="1800" height="100" fill="url(#concrete)" className="foundation-block" filter="url(#soft-shadow)" />
 
                 {/* --- GROUND FLOOR --- */}
                 <g className="gf-group">
-                    {/* Walls with Concrete Texture */}
-                    <rect x="200" y="650" width="300" height="200" fill="url(#concrete)" className="gf-wall" filter="url(#shadow)" />
-                    <rect x="220" y="670" width="260" height="180" fill="#222" className="gf-wall" /> {/* Dark Garage Door */}
-
-                    <rect x="550" y="450" width="300" height="400" fill="#222" className="gf-wall" /> {/* Entry Void */}
-
-                    <rect x="900" y="600" width="800" height="250" fill="url(#concrete)" className="gf-wall" filter="url(#shadow)" />
+                    <rect x="200" y="650" width="300" height="200" fill="url(#concrete)" className="gf-wall" filter="url(#soft-shadow)" />
+                    <rect x="220" y="670" width="260" height="180" fill="#1f1f1f" className="gf-wall" /> {/* Garage */}
+                    <rect x="550" y="450" width="300" height="400" fill="#1f1f1f" className="gf-wall" /> {/* Entry Void */}
+                    <rect x="900" y="600" width="800" height="250" fill="url(#concrete)" className="gf-wall" filter="url(#soft-shadow)" />
 
                     {/* Columns */}
                     <rect x="550" y="450" width="20" height="400" fill="#333" className="gf-col" />
@@ -221,16 +242,14 @@ export default function BuildingAnimation() {
                     <rect x="1300" y="600" width="20" height="250" fill="#333" className="gf-col" />
                     <rect x="1680" y="600" width="20" height="250" fill="#333" className="gf-col" />
 
-                    {/* Slab */}
                     <rect x="180" y="630" width="1540" height="20" fill="#555" className="gf-slab" />
                 </g>
 
                 {/* --- FIRST FLOOR --- */}
                 <g className="ff-group">
-                    <rect x="150" y="430" width="450" height="200" fill="url(#concrete)" className="ff-wall" filter="url(#shadow)" />
+                    <rect x="150" y="430" width="450" height="200" fill="url(#concrete)" className="ff-wall" filter="url(#soft-shadow)" />
                     <rect x="150" y="630" width="450" height="15" fill="#666" className="cantilever-beam" />
-
-                    <rect x="950" y="430" width="700" height="200" fill="url(#concrete)" className="ff-wall" filter="url(#shadow)" />
+                    <rect x="950" y="430" width="700" height="200" fill="url(#concrete)" className="ff-wall" filter="url(#soft-shadow)" />
 
                     <rect x="580" y="430" width="20" height="200" fill="#333" className="ff-col" />
                     <rect x="950" y="430" width="20" height="200" fill="#333" className="ff-col" />
@@ -241,7 +260,7 @@ export default function BuildingAnimation() {
 
                 {/* --- SECOND FLOOR --- */}
                 <g className="sf-group">
-                    <rect x="800" y="210" width="600" height="200" fill="url(#concrete)" className="sf-wall" filter="url(#shadow)" />
+                    <rect x="800" y="210" width="600" height="200" fill="url(#concrete)" className="sf-wall" filter="url(#soft-shadow)" />
                     <rect x="800" y="210" width="15" height="200" fill="#333" className="sf-col" />
                     <rect x="1385" y="210" width="15" height="200" fill="#333" className="sf-col" />
                     <rect x="700" y="190" width="800" height="20" fill="#666" className="roof-slab" />
@@ -249,11 +268,11 @@ export default function BuildingAnimation() {
 
                 {/* --- DETAILS --- */}
                 <g className="details-group">
-                    {/* Realistic Glass Panels */}
-                    <rect x="570" y="450" width="260" height="400" fill="url(#glass-real)" className="glass-panel" opacity="0.6" />
-                    <rect x="920" y="620" width="760" height="230" fill="url(#glass-real)" className="glass-panel" opacity="0.7" />
-                    <rect x="150" y="450" width="300" height="160" fill="url(#glass-real)" className="glass-panel" opacity="0.7" />
-                    <rect x="820" y="230" width="560" height="160" fill="url(#glass-real)" className="glass-panel" opacity="0.7" />
+                    {/* Glass Panels */}
+                    <rect x="570" y="450" width="260" height="400" fill="url(#glass-real)" className="glass-panel" opacity="0.8" />
+                    <rect x="920" y="620" width="760" height="230" fill="url(#glass-real)" className="glass-panel" opacity="0.8" />
+                    <rect x="150" y="450" width="300" height="160" fill="url(#glass-real)" className="glass-panel" opacity="0.8" />
+                    <rect x="820" y="230" width="560" height="160" fill="url(#glass-real)" className="glass-panel" opacity="0.8" />
 
                     {/* Timber Slats */}
                     {Array.from({ length: 12 }).map((_, i) => (
@@ -263,10 +282,9 @@ export default function BuildingAnimation() {
 
                 {/* --- LANDSCAPE --- */}
                 <g className="landscape-group">
-                    {/* Pool with Water Texture */}
-                    <rect x="1200" y="860" width="600" height="40" fill="url(#water)" className="pool-water" opacity="0.8" />
+                    <rect x="1200" y="860" width="600" height="40" fill="url(#water)" className="pool-water" opacity="0.6" />
 
-                    {/* Stylized Trees */}
+                    {/* Trees */}
                     <g transform="translate(50, 850)" className="landscape">
                         <line x1="0" y1="0" x2="0" y2="-120" stroke="#333" strokeWidth="4" />
                         <circle cx="0" cy="-130" r="40" fill="#222" opacity="0.9" />
