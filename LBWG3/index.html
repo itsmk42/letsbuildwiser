@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lets Build Wiser | Civil Engineering Consultancy</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Anime.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Manrope', sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #000;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 4px;
+        }
+
+        .sticky-container {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .scroll-spacer {
+            height: 500vh;
+            /* Increased for smoother, longer scroll */
+        }
+
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .stage-text {
+                width: 90%;
+                left: 0;
+                right: 0;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+                background: rgba(0, 0, 0, 0.7);
+                /* Readability overlay */
+                padding: 20px;
+                border-radius: 10px;
+                backdrop-filter: blur(5px);
+            }
+
+            #building-svg {
+                opacity: 0.4;
+                /* Fade background on mobile */
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-black text-white antialiased selection:bg-white selection:text-black">
+
+    <!-- Header -->
+    <header
+        class="fixed top-0 left-0 w-full z-50 mix-blend-difference px-6 py-6 md:px-12 flex justify-between items-center">
+        <div class="text-xl md:text-2xl font-bold tracking-tight">Lets Build Wiser</div>
+        <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-300">
+            <a href="#" class="hover:text-white transition-colors">Services</a>
+            <a href="#" class="hover:text-white transition-colors">Projects</a>
+            <a href="#" class="hover:text-white transition-colors">About</a>
+            <a href="#" class="hover:text-white transition-colors">Contact</a>
+        </nav>
+        <button class="md:hidden text-white">Menu</button>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero"
+        class="h-screen w-full flex flex-col justify-center items-center text-center px-4 relative z-10 bg-black">
+        <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter mb-4 opacity-0 translate-y-10 hero-text">
+            Lets Build Wiser
+        </h1>
+        <h2 class="text-xl md:text-2xl text-gray-400 font-light tracking-wide opacity-0 translate-y-10 hero-text">
+            Engineering the Future. Wisely.
+        </h2>
+        <div class="absolute bottom-10 animate-bounce opacity-50">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- Scroll-Telling Hub Wrapper -->
+    <div class="relative">
+        <div class="sticky-container flex items-center justify-center bg-black">
+
+            <!-- Text Stage -->
+            <div
+                class="absolute left-0 top-0 h-full w-full md:w-1/3 flex flex-col justify-center px-6 md:pl-24 z-20 pointer-events-none">
+
+                <div class="stage-text absolute opacity-0 transform -translate-x-10" id="text-1">
+                    <h3 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">A solid foundation.</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed">Precision planning and deep piling ensure stability
+                        for the ages.</p>
+                </div>
+
+                <div class="stage-text absolute opacity-0 transform -translate-x-10" id="text-2">
+                    <h3 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">Structural Integrity.</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed">A complex network of steel and concrete, engineered
+                        for resilience.</p>
+                </div>
+
+                <div class="stage-text absolute opacity-0 transform -translate-x-10" id="text-3">
+                    <h3 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">The Facade.</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed">Where engineering meets aesthetics. Efficient,
+                        beautiful, and functional.</p>
+                </div>
+
+                <div class="stage-text absolute opacity-0 transform -translate-x-10" id="text-4">
+                    <h3 class="text-3xl md:text-4xl font-bold mb-4 leading-tight">Completion.</h3>
+                    <p class="text-gray-400 text-lg leading-relaxed">Ready for the world. Delivered on time, with zero
+                        compromise.</p>
+                </div>
+
+            </div>
+
+            <!-- Animation Canvas -->
+            <div class="absolute inset-0 flex items-center justify-center md:justify-end md:pr-24 z-10">
+                <div class="w-full md:w-2/3 h-[70vh] md:h-[90vh] flex items-center justify-center">
+                    <svg id="building-svg" viewBox="0 0 1000 1000" class="w-full h-full overflow-visible">
+                        <defs>
+                            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="2" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                        </defs>
+                        <!-- Groups will be populated by JS -->
+                        <g id="grp-foundation"></g>
+                        <g id="grp-structure"></g>
+                        <g id="grp-facade"></g>
+                        <g id="grp-roof"></g>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-spacer"></div>
+    </div>
+
+    <!-- CTA Section -->
+    <section class="h-screen w-full flex flex-col justify-center items-center text-center px-4 relative z-20 bg-black">
+        <h2 class="text-4xl md:text-6xl font-bold mb-8">Let's build <span class="italic text-gray-400">your</span>
+            vision.</h2>
+        <a href="#"
+            class="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-medium text-black bg-white rounded-full overflow-hidden transition-all hover:bg-gray-200 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-black">
+            <span class="relative z-10">Contact Us</span>
+            <div
+                class="absolute inset-0 bg-gray-200 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300">
+            </div>
+        </a>
+    </section>
+
+    <footer class="py-8 text-center text-gray-500 text-sm bg-black">
+        <p>&copy; 2025 Lets Build Wiser. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Procedural Generation ---
+        const svgNS = "http://www.w3.org/2000/svg";
+
+        function createPath(d, stroke = "white", width = "1", opacity = "1", dash = null) {
+            const path = document.createElementNS(svgNS, "path");
+            path.setAttribute("d", d);
+            path.setAttribute("stroke", stroke);
+            path.setAttribute("stroke-width", width);
+            path.setAttribute("fill", "none");
+            path.setAttribute("opacity", opacity);
+            path.setAttribute("stroke-linecap", "round");
+            path.setAttribute("stroke-linejoin", "round");
+            if (dash) path.setAttribute("stroke-dasharray", dash);
+            path.classList.add("draw-path");
+            return path;
+        }
+
+        function createCircle(cx, cy, r, fill = "white") {
+            const circle = document.createElementNS(svgNS, "circle");
+            circle.setAttribute("cx", cx);
+            circle.setAttribute("cy", cy);
+            circle.setAttribute("r", r);
+            circle.setAttribute("fill", fill);
+            circle.classList.add("node");
+            return circle;
+        }
+
+        // Building Parameters
+        const floors = 15;
+        const floorHeight = 40;
+        const width = 400;
+        const startX = 300;
+        const startY = 800; // Ground level
+        const cols = 5;
+        const colSpacing = width / (cols - 1);
+
+        // 1. Foundation
+        const grpFoundation = document.getElementById('grp-foundation');
+        // Ground
+        grpFoundation.appendChild(createPath(`M${startX - 100},${startY} L${startX + width + 100},${startY}`, "white", "2"));
+        // Piles
+        for (let i = 0; i < cols; i++) {
+            let x = startX + i * colSpacing;
+            grpFoundation.appendChild(createPath(`M${x},${startY} L${x},${startY + 100}`, "white", "2"));
+            grpFoundation.appendChild(createCircle(x, startY, 4));
+        }
+        // Grid lines (dashed)
+        for (let i = 0; i < cols; i++) {
+            let x = startX + i * colSpacing;
+            grpFoundation.appendChild(createPath(`M${x},${startY} L${x},${startY - floors * floorHeight}`, "#555", "1", "0.5", "5,5"));
+        }
+
+        // 2. Structure (Floors & Cols)
+        const grpStructure = document.getElementById('grp-structure');
+        // Floors
+        for (let f = 1; f <= floors; f++) {
+            let y = startY - f * floorHeight;
+            grpStructure.appendChild(createPath(`M${startX},${y} L${startX + width},${y}`, "white", "1.5"));
+        }
+        // Columns
+        for (let i = 0; i < cols; i++) {
+            let x = startX + i * colSpacing;
+            grpStructure.appendChild(createPath(`M${x},${startY} L${x},${startY - floors * floorHeight}`, "white", "2"));
+            // Nodes at intersections
+            for (let f = 1; f <= floors; f++) {
+                let y = startY - f * floorHeight;
+                grpStructure.appendChild(createCircle(x, y, 2));
+            }
+        }
+
+        // 3. Facade (Cross Bracing & Windows)
+        const grpFacade = document.getElementById('grp-facade');
+        // X-Bracing every 3 floors
+        for (let f = 0; f < floors; f += 3) {
+            let yBottom = startY - f * floorHeight;
+            let yTop = startY - (f + 3) * floorHeight;
+            if (f + 3 > floors) continue;
+
+            // Left X
+            grpFacade.appendChild(createPath(`M${startX},${yBottom} L${startX + colSpacing * 2},${yTop}`, "white", "1", "0.7"));
+            grpFacade.appendChild(createPath(`M${startX + colSpacing * 2},${yBottom} L${startX},${yTop}`, "white", "1", "0.7"));
+
+            // Right X
+            grpFacade.appendChild(createPath(`M${startX + width},${yBottom} L${startX + width - colSpacing * 2},${yTop}`, "white", "1", "0.7"));
+            grpFacade.appendChild(createPath(`M${startX + width - colSpacing * 2},${yBottom} L${startX + width},${yTop}`, "white", "1", "0.7"));
+        }
+        // Window mullions (vertical lines between cols)
+        for (let i = 0; i < cols - 1; i++) {
+            let x1 = startX + i * colSpacing;
+            let x2 = startX + (i + 1) * colSpacing;
+            let midX = (x1 + x2) / 2;
+            grpFacade.appendChild(createPath(`M${midX},${startY} L${midX},${startY - floors * floorHeight}`, "white", "0.5", "0.3"));
+        }
+
+        // 4. Roof
+        const grpRoof = document.getElementById('grp-roof');
+        const roofY = startY - floors * floorHeight;
+        grpRoof.appendChild(createPath(`M${startX},${roofY} L${startX + width / 2},${roofY - 100} L${startX + width},${roofY}`, "white", "2"));
+        grpRoof.appendChild(createPath(`M${startX + width / 2},${roofY - 100} L${startX + width / 2},${roofY - 150}`, "white", "2")); // Spire
+        grpRoof.appendChild(createCircle(startX + width / 2, roofY - 150, 3, "red")); // Beacon
+
+        // --- Animation Logic ---
+
+        // Setup paths
+        const paths = document.querySelectorAll('.draw-path');
+        paths.forEach(path => {
+            if (!path.getAttribute("stroke-dasharray")) {
+                const len = path.getTotalLength();
+                path.style.strokeDasharray = len;
+                path.style.strokeDashoffset = len;
+            } else {
+                // For dashed lines, we'll just fade them in
+                path.style.opacity = 0;
+            }
+        });
+        document.querySelectorAll('.node').forEach(n => n.style.transform = "scale(0)");
+
+        // Hero
+        anime({
+            targets: '.hero-text',
+            opacity: [0, 1],
+            translateY: [50, 0],
+            easing: 'easeOutExpo',
+            duration: 1500,
+            delay: anime.stagger(300, { start: 500 })
+        });
+
+        // Timeline
+        const tl = anime.timeline({
+            autoplay: false,
+            easing: 'linear',
+            duration: 10000
+        });
+
+        // Stage 1: Foundation (0-2000)
+        tl.add({
+            targets: '#grp-foundation .draw-path',
+            strokeDashoffset: [anime.setDashoffset, 0],
+            opacity: [0, 1], // Handle dashed lines
+            duration: 1500,
+            easing: 'easeInOutSine',
+            delay: anime.stagger(50)
+        }, 0)
+            .add({
+                targets: '#grp-foundation .node',
+                scale: [0, 1],
+                duration: 500,
+                delay: anime.stagger(50)
+            }, 500)
+            .add({
+                targets: '#text-1',
+                opacity: [0, 1],
+                translateX: [-40, 0],
+                duration: 500
+            }, 0)
+            .add({
+                targets: '#text-1',
+                opacity: [1, 0],
+                translateX: [0, 40],
+                duration: 500
+            }, 2000);
+
+        // Stage 2: Structure (2500-4500)
+        tl.add({
+            targets: '#grp-structure .draw-path',
+            strokeDashoffset: [anime.setDashoffset, 0],
+            duration: 2000,
+            easing: 'easeInOutSine',
+            delay: anime.stagger(10) // Fast ripple up
+        }, 2500)
+            .add({
+                targets: '#grp-structure .node',
+                scale: [0, 1],
+                duration: 500,
+                delay: anime.stagger(10)
+            }, 3000)
+            .add({
+                targets: '#text-2',
+                opacity: [0, 1],
+                translateX: [-40, 0],
+                duration: 500
+            }, 2500)
+            .add({
+                targets: '#text-2',
+                opacity: [1, 0],
+                translateX: [0, 40],
+                duration: 500
+            }, 4500);
+
+        // Stage 3: Facade (5000-7000)
+        tl.add({
+            targets: '#grp-facade .draw-path',
+            strokeDashoffset: [anime.setDashoffset, 0],
+            opacity: [0, 0.7],
+            duration: 2000,
+            easing: 'easeInOutSine',
+            delay: anime.stagger(20)
+        }, 5000)
+            .add({
+                targets: '#text-3',
+                opacity: [0, 1],
+                translateX: [-40, 0],
+                duration: 500
+            }, 5000)
+            .add({
+                targets: '#text-3',
+                opacity: [1, 0],
+                translateX: [0, 40],
+                duration: 500
+            }, 7000);
+
+        // Stage 4: Roof (7500-9500)
+        tl.add({
+            targets: '#grp-roof .draw-path',
+            strokeDashoffset: [anime.setDashoffset, 0],
+            duration: 1500,
+            easing: 'easeInOutSine'
+        }, 7500)
+            .add({
+                targets: '#grp-roof .node',
+                scale: [0, 1],
+                duration: 500
+            }, 8500)
+            .add({
+                targets: '#text-4',
+                opacity: [0, 1],
+                translateX: [-40, 0],
+                duration: 500
+            }, 7500)
+            .add({
+                targets: '#text-4',
+                opacity: [1, 0],
+                translateX: [0, 40],
+                duration: 500
+            }, 9500);
+
+        // Scroll Logic
+        const scrollSpacer = document.querySelector('.scroll-spacer');
+        const hero = document.querySelector('#hero');
+
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const windowHeight = window.innerHeight;
+            const heroHeight = hero.offsetHeight;
+
+            // Calculate progress
+            const scrollDistance = scrollSpacer.offsetHeight - windowHeight;
+            let scrollProgress = (scrollTop - heroHeight) / scrollDistance;
+
+            // Clamp
+            scrollProgress = Math.max(0, Math.min(1, scrollProgress));
+
+            tl.seek(tl.duration * scrollProgress);
+        });
+
+    </script>
+</body>
+
+</html>
