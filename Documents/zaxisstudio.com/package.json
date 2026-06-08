@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
-    "next": "^14.2.4",
+    "next": "14.2.35",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -22,6 +22,8 @@
   },
   "vitest": {
     "environment": "jsdom",
-    "setupFiles": ["./tests/setup.js"]
+    "setupFiles": [
+      "./tests/setup.js"
+    ]
   }
 }
