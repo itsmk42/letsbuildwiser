@@ -2,6 +2,9 @@
 
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
+const contactEmail = "builderonline@gmail.com";
+const formEndpoint = `https://formsubmit.co/${contactEmail}`;
+
 export default function ContactPage() {
     return (
         <div className="min-h-screen bg-black pt-24 pb-12 px-6 flex flex-col items-center justify-center relative overflow-hidden">
@@ -40,7 +43,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Email Us</p>
-                                <p className="text-lg font-medium">hello@letsbuildwiser.com</p>
+                                <p className="text-lg font-medium">{contactEmail}</p>
                             </div>
                         </div>
 
@@ -62,13 +65,20 @@ export default function ContactPage() {
                 {/* Contact Form */}
                 <div className="bg-white/5 backdrop-blur-lg border border-white/10 p-8 rounded-2xl shadow-2xl">
                     <h2 className="text-2xl font-bold text-white mb-6">Send us a message</h2>
-                    <form className="space-y-6">
+                    <form action={formEndpoint} method="POST" className="space-y-6">
+                        <input type="hidden" name="_subject" value="New Letsbuildwiser inquiry" />
+                        <input type="hidden" name="_template" value="table" />
+                        <input type="hidden" name="_captcha" value="false" />
+                        <input type="text" name="_honey" className="hidden" tabIndex={-1} autoComplete="off" />
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label htmlFor="name" className="text-sm font-medium text-gray-400">Name</label>
                                 <input
                                     type="text"
                                     id="name"
+                                    name="name"
+                                    required
                                     className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors"
                                     placeholder="John Doe"
                                 />
@@ -78,29 +88,75 @@ export default function ContactPage() {
                                 <input
                                     type="tel"
                                     id="phone"
+                                    name="phone"
+                                    required
                                     className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors"
                                     placeholder="+1 (555) 000-0000"
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-2">
-                            <label htmlFor="email" className="text-sm font-medium text-gray-400">Email</label>
-                            <input
-                                type="email"
-                                id="email"
-                                className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors"
-                                placeholder="john@example.com"
-                            />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label htmlFor="email" className="text-sm font-medium text-gray-400">Email</label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    required
+                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+                                    placeholder="john@example.com"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label htmlFor="location" className="text-sm font-medium text-gray-400">Location</label>
+                                <input
+                                    type="text"
+                                    id="location"
+                                    name="location"
+                                    required
+                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+                                    placeholder="Bengaluru, Karnataka"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <label htmlFor="plot-size" className="text-sm font-medium text-gray-400">Plot Size</label>
+                                <input
+                                    type="text"
+                                    id="plot-size"
+                                    name="plot_size"
+                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+                                    placeholder="Example: 30x40 ft"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label htmlFor="requirement-type" className="text-sm font-medium text-gray-400">Type of Requirement</label>
+                                <select
+                                    id="requirement-type"
+                                    name="requirement_type"
+                                    required
+                                    defaultValue=""
+                                    className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors"
+                                >
+                                    <option value="" disabled className="bg-black text-gray-400">Select</option>
+                                    <option value="Online Consultation" className="bg-black text-white">Online Consultation</option>
+                                    <option value="On-site Consultation" className="bg-black text-white">On-site Consultation</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div className="space-y-2">
                             <label htmlFor="message" className="text-sm font-medium text-gray-400">Message</label>
                             <textarea
                                 id="message"
+                                name="message"
                                 rows={4}
+                                required
                                 className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors"
-                                placeholder="Tell us about your project..."
+                                placeholder="Share current stage, issues, expected timeline, and budget context."
                             ></textarea>
                         </div>
 
@@ -108,7 +164,7 @@ export default function ContactPage() {
                             type="submit"
                             className="w-full bg-[var(--color-gold)] text-black font-bold py-4 rounded-lg hover:bg-yellow-400 transition-all transform hover:scale-[1.02]"
                         >
-                            Send Message
+                            Submit Inquiry
                         </button>
                     </form>
                 </div>
