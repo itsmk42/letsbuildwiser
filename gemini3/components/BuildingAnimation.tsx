@@ -1143,16 +1143,19 @@ export default function BuildingAnimation() {
 
             {/* --- HERO OVERLAY (Fades out on scroll) --- */}
             <div className="hero-overlay absolute inset-0 z-50 flex flex-col items-center justify-center bg-black pointer-events-none">
+                {/* Ambient radial glow */}
+                <div className="absolute w-[600px] h-[600px] rounded-full bg-[var(--color-gold)] opacity-[0.04] blur-[120px] pointer-events-none"></div>
                 <h1 className="text-5xl sm:text-6xl md:text-8xl lg:text-9xl font-bold text-white tracking-tighter text-center px-4">
-                    Letsbuild <span className="text-[var(--color-gold)]">wiser</span>
+                    Letsbuild <span className="gold-gradient-text">wiser</span>
                 </h1>
-                <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-gray-400 max-w-2xl text-center px-6">
+                <div className="luxury-divider w-20 sm:w-28 md:w-36 mt-4 sm:mt-6 mb-3 sm:mb-4"></div>
+                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-400 max-w-2xl text-center px-6 tracking-wide uppercase font-light">
                     Civil Engineering Consultation & Construction
                 </p>
-                <div className="absolute bottom-8 sm:bottom-10 animate-bounce text-gray-500">
-                    <span className="text-xs sm:text-sm">Scroll to build</span>
-                    <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-gray-500 rounded-full mx-auto mt-2 flex justify-center pt-2">
-                        <div className="w-1 h-1.5 sm:h-2 bg-gray-500 rounded-full"></div>
+                <div className="absolute bottom-8 sm:bottom-12 flex flex-col items-center text-gray-500">
+                    <span className="text-[10px] sm:text-xs tracking-[0.3em] uppercase text-gray-500 mb-3">Scroll to explore</span>
+                    <div className="w-5 h-8 sm:w-[22px] sm:h-9 border border-[var(--color-gold-border)] rounded-full flex justify-center pt-2">
+                        <div className="w-[3px] h-[6px] sm:h-2 bg-[var(--color-gold-soft)] rounded-full animate-bounce"></div>
                     </div>
                 </div>
             </div>
@@ -1163,12 +1166,13 @@ export default function BuildingAnimation() {
 
                     {/* Text 1 - Structural Safety */}
                     <div className="text-1 absolute inset-0 opacity-0 flex items-center justify-center md:justify-start">
-                        <div className="max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-left md:ml-8 lg:ml-16 bg-black/70 backdrop-blur-sm p-6 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl">
-                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tighter leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                        <div className="relative max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-left md:ml-8 lg:ml-16 glass-card p-6 sm:p-8 md:p-10 overflow-hidden">
+                            <span className="phase-number">01</span>
+                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 Structural<br /> Safety
                             </h2>
-                            <div className="w-10 sm:w-12 md:w-20 h-1 md:h-1.5 bg-[var(--color-gold)] mb-3 sm:mb-4 md:mb-6 mx-auto md:mx-0 shadow-[0_0_20px_rgba(255,215,0,0.6)]"></div>
-                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-100 font-normal leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                            <div className="luxury-divider w-10 sm:w-12 md:w-20 mb-3 sm:mb-4 md:mb-6 mx-auto md:mx-0"></div>
+                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 font-light leading-relaxed tracking-wide">
                                 We prioritize your safety above all. Rigorous calculations and stress testing ensure a home that stands strong for generations.
                             </p>
                         </div>
@@ -1176,12 +1180,13 @@ export default function BuildingAnimation() {
 
                     {/* Text 2 - Cost Optimization */}
                     <div className="text-2 absolute inset-0 opacity-0 flex items-center justify-center md:justify-end">
-                        <div className="max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-right md:mr-8 lg:mr-16 flex flex-col items-center md:items-end bg-black/70 backdrop-blur-sm p-6 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl">
-                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tighter leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                        <div className="relative max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-right md:mr-8 lg:mr-16 flex flex-col items-center md:items-end glass-card p-6 sm:p-8 md:p-10 overflow-hidden">
+                            <span className="phase-number">02</span>
+                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 Cost<br /> Optimization
                             </h2>
-                            <div className="w-10 sm:w-12 md:w-20 h-1 md:h-1.5 bg-[var(--color-gold)] mb-3 sm:mb-4 md:mb-6 shadow-[0_0_20px_rgba(255,215,0,0.6)]"></div>
-                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-100 font-normal leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                            <div className="luxury-divider w-10 sm:w-12 md:w-20 mb-3 sm:mb-4 md:mb-6"></div>
+                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 font-light leading-relaxed tracking-wide">
                                 Smart engineering saves money. We optimize material usage and construction methods to deliver premium quality within budget.
                             </p>
                         </div>
@@ -1189,12 +1194,13 @@ export default function BuildingAnimation() {
 
                     {/* Text 3 - Regulatory Compliance */}
                     <div className="text-3 absolute inset-0 opacity-0 flex items-center justify-center md:justify-start">
-                        <div className="max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-left md:ml-8 lg:ml-16 bg-black/70 backdrop-blur-sm p-6 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl">
-                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tighter leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                        <div className="relative max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-left md:ml-8 lg:ml-16 glass-card p-6 sm:p-8 md:p-10 overflow-hidden">
+                            <span className="phase-number">03</span>
+                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 Regulatory<br /> Compliance
                             </h2>
-                            <div className="w-10 sm:w-12 md:w-20 h-1 md:h-1.5 bg-[var(--color-gold)] mb-3 sm:mb-4 md:mb-6 mx-auto md:mx-0 shadow-[0_0_20px_rgba(255,215,0,0.6)]"></div>
-                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-100 font-normal leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                            <div className="luxury-divider w-10 sm:w-12 md:w-20 mb-3 sm:mb-4 md:mb-6 mx-auto md:mx-0"></div>
+                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 font-light leading-relaxed tracking-wide">
                                 Navigate approvals with ease. Our designs adhere strictly to all local building codes and zoning regulations.
                             </p>
                         </div>
@@ -1202,12 +1208,13 @@ export default function BuildingAnimation() {
 
                     {/* Text 4 - Timely Delivery */}
                     <div className="text-4 absolute inset-0 opacity-0 flex items-center justify-center md:justify-end">
-                        <div className="max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-right md:mr-8 lg:mr-16 flex flex-col items-center md:items-end bg-black/70 backdrop-blur-sm p-6 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl">
-                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tighter leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                        <div className="relative max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-right md:mr-8 lg:mr-16 flex flex-col items-center md:items-end glass-card p-6 sm:p-8 md:p-10 overflow-hidden">
+                            <span className="phase-number">04</span>
+                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 Timely<br /> Delivery
                             </h2>
-                            <div className="w-10 sm:w-12 md:w-20 h-1 md:h-1.5 bg-[var(--color-gold)] mb-3 sm:mb-4 md:mb-6 shadow-[0_0_20px_rgba(255,215,0,0.6)]"></div>
-                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-100 font-normal leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                            <div className="luxury-divider w-10 sm:w-12 md:w-20 mb-3 sm:mb-4 md:mb-6"></div>
+                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 font-light leading-relaxed tracking-wide">
                                 Efficient project management means no delays. We respect your time and ensure your dream home is ready when promised.
                             </p>
                         </div>
@@ -1215,12 +1222,13 @@ export default function BuildingAnimation() {
 
                     {/* Text 5 - Quality Assurance */}
                     <div className="text-5 absolute inset-0 opacity-0 flex items-center justify-center md:justify-start">
-                        <div className="max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-left md:ml-8 lg:ml-16 bg-black/70 backdrop-blur-sm p-6 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl">
-                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tighter leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                        <div className="relative max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-left md:ml-8 lg:ml-16 glass-card p-6 sm:p-8 md:p-10 overflow-hidden">
+                            <span className="phase-number">05</span>
+                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 Quality<br /> Assurance
                             </h2>
-                            <div className="w-10 sm:w-12 md:w-20 h-1 md:h-1.5 bg-[var(--color-gold)] mb-3 sm:mb-4 md:mb-6 mx-auto md:mx-0 shadow-[0_0_20px_rgba(255,215,0,0.6)]"></div>
-                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-100 font-normal leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                            <div className="luxury-divider w-10 sm:w-12 md:w-20 mb-3 sm:mb-4 md:mb-6 mx-auto md:mx-0"></div>
+                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 font-light leading-relaxed tracking-wide">
                                 Every detail matters. Our rigorous site supervision and quality control protocols ensure flawless execution from foundation to finishing.
                             </p>
                         </div>
@@ -1228,12 +1236,13 @@ export default function BuildingAnimation() {
 
                     {/* Text 6 - Sustainable Design */}
                     <div className="text-6 absolute inset-0 opacity-0 flex items-center justify-center md:justify-end">
-                        <div className="max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-right md:mr-8 lg:mr-16 flex flex-col items-center md:items-end bg-black/70 backdrop-blur-sm p-6 sm:p-8 md:p-10 rounded-2xl border border-white/10 shadow-2xl">
-                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tighter leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                        <div className="relative max-w-[85vw] sm:max-w-md md:max-w-xl text-center md:text-right md:mr-8 lg:mr-16 flex flex-col items-center md:items-end glass-card p-6 sm:p-8 md:p-10 overflow-hidden">
+                            <span className="phase-number">06</span>
+                            <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tight leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
                                 Sustainable<br /> Design
                             </h2>
-                            <div className="w-10 sm:w-12 md:w-20 h-1 md:h-1.5 bg-[var(--color-gold)] mb-3 sm:mb-4 md:mb-6 shadow-[0_0_20px_rgba(255,215,0,0.6)]"></div>
-                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-100 font-normal leading-relaxed drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
+                            <div className="luxury-divider w-10 sm:w-12 md:w-20 mb-3 sm:mb-4 md:mb-6"></div>
+                            <p className="text-sm sm:text-base md:text-lg lg:text-xl text-gray-200 font-light leading-relaxed tracking-wide">
                                 Building for tomorrow. We integrate energy-efficient solutions and eco-friendly materials for a home that respects the environment.
                             </p>
                         </div>
@@ -1241,13 +1250,21 @@ export default function BuildingAnimation() {
 
                     {/* Text 7 - Final CTA */}
                     <div className="text-7 absolute inset-0 opacity-0 flex flex-col items-center justify-center scale-95">
-                        <div className="bg-black/60 backdrop-blur-md p-8 sm:p-12 md:p-16 rounded-3xl border border-[var(--color-gold)]/30 shadow-[0_0_60px_rgba(255,215,0,0.2)]">
-                            <h2 className="text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-bold text-white tracking-tighter text-center drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
-                                Letsbuild <span className="text-[var(--color-gold)] drop-shadow-[0_0_30px_rgba(255,215,0,0.5)]">wiser</span>
+                        <div className="relative glass-card animate-glowPulse p-8 sm:p-12 md:p-16 overflow-hidden">
+                            {/* Ambient glow behind CTA */}
+                            <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-gold-glow)] via-transparent to-[var(--color-gold-glow)] opacity-50 pointer-events-none"></div>
+                            <h2 className="relative text-4xl sm:text-5xl md:text-7xl lg:text-9xl font-bold text-white tracking-tighter text-center">
+                                Letsbuild <span className="gold-gradient-text">wiser</span>
                             </h2>
-                            <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl lg:text-2xl text-gray-100 max-w-2xl text-center drop-shadow-[0_2px_10px_rgba(0,0,0,0.8)]">
+                            <div className="luxury-divider w-24 sm:w-32 md:w-40 mx-auto mt-4 sm:mt-6 mb-3 sm:mb-4"></div>
+                            <p className="relative text-sm sm:text-base md:text-lg lg:text-xl text-gray-300 max-w-2xl text-center tracking-widest uppercase font-light">
                                 Civil Engineering Consultation & Construction
                             </p>
+                            <div className="relative flex justify-center mt-6 sm:mt-8 pointer-events-auto">
+                                <a href="/contact" className="px-8 sm:px-10 py-3 sm:py-4 bg-[var(--color-gold)] text-black font-bold text-sm sm:text-base rounded-full hover:shadow-[0_0_30px_rgba(255,215,0,0.5)] hover:scale-105 transition-all duration-300 tracking-wide">
+                                    Get in Touch
+                                </a>
+                            </div>
                         </div>
                     </div>
 
