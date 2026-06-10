@@ -13,7 +13,24 @@ interface BlueprintLine {
     phase: number;      // When this line appears (1-6)
     delay: number;      // Stagger delay within phase
     isFloorPlan: boolean;  // true = floor plan, false = elevation
+    lineLength: number; // Pre-computed length of the line
 }
+
+// Helper to compute total line length from geometry positions
+const getLineLength = (line: THREE.Line): number => {
+    const points: THREE.Vector3[] = [];
+    const position = line.geometry.attributes.position;
+    if (position) {
+        for (let i = 0; i < position.count; i++) {
+            points.push(new THREE.Vector3().fromBufferAttribute(position, i));
+        }
+    }
+    let total = 0;
+    for (let i = 0; i < points.length - 1; i++) {
+        total += points[i].distanceTo(points[i + 1]);
+    }
+    return total || 0.01;
+};
 
 // Create a 2D line from points
 const createLine = (
@@ -22,24 +39,82 @@ const createLine = (
     lineWidth: number = 1,
     dashed: boolean = false
 ): THREE.Line => {
+    let length = 0;
+    for (let i = 0; i < points.length - 1; i++) {
+        length += points[i].distanceTo(points[i + 1]);
+    }
+    if (length === 0) length = 0.01;
+
     const geometry = new THREE.BufferGeometry().setFromPoints(points);
     const material = dashed
         ? new THREE.LineDashedMaterial({
             color,
             transparent: true,
             opacity: 1,
-            dashSize: 0.2,
-            gapSize: 0.1,
+            dashSize: 0.15,
+            gapSize: 0.08,
             linewidth: lineWidth,
         })
-        : new THREE.LineBasicMaterial({
+        : new THREE.LineDashedMaterial({
             color,
             transparent: true,
             opacity: 1,
+            dashSize: length,
+            gapSize: length,
             linewidth: lineWidth,
         });
+
     const line = new THREE.Line(geometry, material);
-    if (dashed) line.computeLineDistances();
+    line.computeLineDistances();
+
+    if (!dashed) {
+        material.onBeforeCompile = (shader) => {
+            shader.uniforms.uDashOffset = { value: length };
+            shader.fragmentShader = `
+                uniform float uDashOffset;
+            ` + shader.fragmentShader;
+            shader.fragmentShader = shader.fragmentShader.replace(
+                'mod( vLineDistance, dashSize + gapSize )',
+                'mod( vLineDistance + uDashOffset, dashSize + gapSize )'
+            );
+            material.userData.shader = shader;
+        };
+    }
+
+    return line;
+};
+
+// Create a glowing thicker duplicate of primary lines
+const createGlowLine = (
+    points: THREE.Vector3[],
+    color: number,
+    length: number
+): THREE.Line => {
+    const geometry = new THREE.BufferGeometry().setFromPoints(points);
+    const material = new THREE.LineDashedMaterial({
+        color: 0xffb83d, // Soft, glowing warm gold
+        transparent: true,
+        opacity: 0.15,
+        linewidth: 4, // Thicker glow lines on supported platforms
+        dashSize: length,
+        gapSize: length,
+    });
+
+    const line = new THREE.Line(geometry, material);
+    line.computeLineDistances();
+
+    material.onBeforeCompile = (shader) => {
+        shader.uniforms.uDashOffset = { value: length };
+        shader.fragmentShader = `
+            uniform float uDashOffset;
+        ` + shader.fragmentShader;
+        shader.fragmentShader = shader.fragmentShader.replace(
+            'mod( vLineDistance, dashSize + gapSize )',
+            'mod( vLineDistance + uDashOffset, dashSize + gapSize )'
+        );
+        material.userData.shader = shader;
+    };
+
     return line;
 };
 
@@ -343,9 +418,6 @@ const createRoofElevation = (
     return group;
 };
 
-
-
-
 export default function BuildingAnimation() {
     const containerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -358,6 +430,9 @@ export default function BuildingAnimation() {
     const animationFrameRef = useRef<number>(0);
     const progressRef = useRef<{ value: number }>({ value: 0 });
     const isInitializedRef = useRef(false);
+    
+    // Ref to hold points particle system and speeds
+    const particlesRef = useRef<{ points: THREE.Points; speeds: Float32Array } | null>(null);
 
     // Color palette - CAD blueprint style
     const colors = useMemo(() => ({
@@ -377,14 +452,14 @@ export default function BuildingAnimation() {
         const addLine = (points: THREE.Vector3[], color: number, phase: number, delay: number = 0, dashed: boolean = false) => {
             const line = createLine(points, color, 1, dashed);
             group.add(line);
-            lines.push({ line, phase, delay, isFloorPlan: true });
+            lines.push({ line, phase, delay, isFloorPlan: true, lineLength: getLineLength(line) });
         };
 
         const addGroup = (grp: THREE.Group, phase: number, delay: number = 0) => {
             group.add(grp);
             grp.children.forEach((child, idx) => {
                 if (child instanceof THREE.Line) {
-                    lines.push({ line: child, phase, delay: delay + idx * 0.01, isFloorPlan: true });
+                    lines.push({ line: child, phase, delay: delay + idx * 0.01, isFloorPlan: true, lineLength: getLineLength(child) });
                 }
             });
         };
@@ -438,21 +513,21 @@ export default function BuildingAnimation() {
         const frontDoorArc = createArc(-0.1*s, 4.2*s, 0.8*s, -Math.PI/2, 0, colors.accent, 12);
         frontDoorArc.rotation.x = -Math.PI/2;
         group.add(frontDoorArc);
-        lines.push({ line: frontDoorArc, phase: 3, delay: 0.02, isFloorPlan: true });
+        lines.push({ line: frontDoorArc, phase: 3, delay: 0.02, isFloorPlan: true, lineLength: getLineLength(frontDoorArc) });
 
         // Bedroom door
         addLine([new THREE.Vector3(1.5*s, 0, -1.5*s), new THREE.Vector3(1.5*s, 0, -0.8*s)], colors.accent, 3, 0.05);
         const bedroomDoorArc = createArc(1.5*s, -0.8*s, 0.7*s, Math.PI, Math.PI*1.5, colors.accent, 12);
         bedroomDoorArc.rotation.x = -Math.PI/2;
         group.add(bedroomDoorArc);
-        lines.push({ line: bedroomDoorArc, phase: 3, delay: 0.07, isFloorPlan: true });
+        lines.push({ line: bedroomDoorArc, phase: 3, delay: 0.07, isFloorPlan: true, lineLength: getLineLength(bedroomDoorArc) });
 
         // Bathroom door
         addLine([new THREE.Vector3(-3.5*s, 0, -1.5*s), new THREE.Vector3(-2.8*s, 0, -1.5*s)], colors.accent, 3, 0.1);
         const bathDoorArc = createArc(-2.8*s, -1.5*s, 0.7*s, 0, Math.PI/2, colors.accent, 12);
         bathDoorArc.rotation.x = -Math.PI/2;
         group.add(bathDoorArc);
-        lines.push({ line: bathDoorArc, phase: 3, delay: 0.12, isFloorPlan: true });
+        lines.push({ line: bathDoorArc, phase: 3, delay: 0.12, isFloorPlan: true, lineLength: getLineLength(bathDoorArc) });
 
         // Kitchen door
         addLine([new THREE.Vector3(-3*s, 0, 1*s), new THREE.Vector3(-2.3*s, 0, 1*s)], colors.accent, 3, 0.15);
@@ -482,7 +557,7 @@ export default function BuildingAnimation() {
         const livingTable = createRect(-3*s, 1.8*s, 0.6*s, 0.4*s, colors.detail);
         livingTable.rotation.x = -Math.PI/2;
         group.add(livingTable);
-        lines.push({ line: livingTable, phase: 5, delay: 0.05, isFloorPlan: true });
+        lines.push({ line: livingTable, phase: 5, delay: 0.05, isFloorPlan: true, lineLength: getLineLength(livingTable) });
 
         // Dining area - Dining table with chairs
         const diningTable = createDiningTable(0*s, 2.5*s, colors.detail);
@@ -554,11 +629,45 @@ export default function BuildingAnimation() {
         const addLine = (line: THREE.Line | THREE.Group, phase: number, delay: number = 0) => {
             group.add(line);
             if (line instanceof THREE.Line) {
-                lines.push({ line, phase, delay, isFloorPlan: false });
+                const length = getLineLength(line);
+                lines.push({ line, phase, delay, isFloorPlan: false, lineLength: length });
+
+                // Add wider glow copy behind primary gold lines
+                const material = line.material as THREE.LineDashedMaterial | THREE.LineBasicMaterial;
+                if (material.color.getHex() === colors.primary) {
+                    const points: THREE.Vector3[] = [];
+                    const position = line.geometry.attributes.position;
+                    if (position) {
+                        for (let i = 0; i < position.count; i++) {
+                            points.push(new THREE.Vector3().fromBufferAttribute(position, i));
+                        }
+                    }
+                    const glowLine = createGlowLine(points, colors.primary, length);
+                    glowLine.position.z = -0.05; // Position slightly behind main line
+                    group.add(glowLine);
+                    lines.push({ line: glowLine, phase, delay, isFloorPlan: false, lineLength: length });
+                }
             } else {
                 line.children.forEach((child, idx) => {
                     if (child instanceof THREE.Line) {
-                        lines.push({ line: child, phase, delay: delay + idx * 0.01, isFloorPlan: false });
+                        const length = getLineLength(child);
+                        lines.push({ line: child, phase, delay: delay + idx * 0.01, isFloorPlan: false, lineLength: length });
+
+                        // Add wider glow copy behind primary gold lines
+                        const material = child.material as THREE.LineDashedMaterial | THREE.LineBasicMaterial;
+                        if (material.color.getHex() === colors.primary) {
+                            const points: THREE.Vector3[] = [];
+                            const position = child.geometry.attributes.position;
+                            if (position) {
+                                for (let i = 0; i < position.count; i++) {
+                                    points.push(new THREE.Vector3().fromBufferAttribute(position, i));
+                                }
+                            }
+                            const glowLine = createGlowLine(points, colors.primary, length);
+                            glowLine.position.z = -0.05; // Position slightly behind main line
+                            group.add(glowLine);
+                            lines.push({ line: glowLine, phase, delay: delay + idx * 0.01, isFloorPlan: false, lineLength: length });
+                        }
                     }
                 });
             }
@@ -850,35 +959,65 @@ export default function BuildingAnimation() {
         const progress = progressRef.current.value;
         const lines = blueprintLinesRef.current;
 
+        // ==================== PARTICLE ANIMATION ====================
+        if (particlesRef.current) {
+            const { points: particlePoints, speeds } = particlesRef.current;
+            const positions = particlePoints.geometry.attributes.position.array as Float32Array;
+            const count = positions.length / 3;
+
+            for (let i = 0; i < count; i++) {
+                // Drift up
+                positions[i * 3 + 1] += speeds[i * 3 + 1];
+
+                // Sway horizontally using sine wave
+                const phase = speeds[i * 3 + 2] + performance.now() * 0.0015;
+                positions[i * 3] += Math.sin(phase) * 0.003;
+
+                // Reset position if it goes too high
+                if (positions[i * 3 + 1] > 4) {
+                    positions[i * 3 + 1] = -4;
+                    positions[i * 3] = (Math.random() - 0.5) * 12;
+                }
+            }
+            particlePoints.geometry.attributes.position.needsUpdate = true;
+        }
+
         // ==================== BLUEPRINT LINE ANIMATION ====================
-        lines.forEach(({ line, phase, delay, isFloorPlan }) => {
+        lines.forEach(({ line, phase, delay, isFloorPlan, lineLength }) => {
             let phaseStart: number, phaseEnd: number;
 
+            // Fluid overlaps and increased stagger
+            const stagger = delay * 0.06;
             switch (phase) {
-                case 1: phaseStart = 0.06 + delay * 0.02; phaseEnd = 0.20; break;
-                case 2: phaseStart = 0.18 + delay * 0.02; phaseEnd = 0.34; break;
-                case 3: phaseStart = 0.32 + delay * 0.02; phaseEnd = 0.48; break;
-                case 4: phaseStart = 0.46 + delay * 0.02; phaseEnd = 0.62; break;
-                case 5: phaseStart = 0.60 + delay * 0.02; phaseEnd = 0.76; break;
-                case 6: phaseStart = 0.74 + delay * 0.02; phaseEnd = 0.88; break;
+                case 1: phaseStart = 0.04 + stagger; phaseEnd = 0.18 + stagger; break;
+                case 2: phaseStart = 0.14 + stagger; phaseEnd = 0.30 + stagger; break;
+                case 3: phaseStart = 0.26 + stagger; phaseEnd = 0.42 + stagger; break;
+                case 4: phaseStart = 0.38 + stagger; phaseEnd = 0.54 + stagger; break;
+                case 5: phaseStart = 0.50 + stagger; phaseEnd = 0.66 + stagger; break;
+                case 6: phaseStart = 0.62 + stagger; phaseEnd = 0.78 + stagger; break;
                 default: phaseStart = 0; phaseEnd = 1;
             }
 
             const elementProgress = Math.max(0, Math.min(1, (progress - phaseStart) / (phaseEnd - phaseStart)));
-            const eased = 1 - Math.pow(1 - elementProgress, 3);
 
+            // easeOutExpo curve for premium reveals
+            const eased = elementProgress === 1 ? 1 : 1 - Math.pow(2, -10 * elementProgress);
+
+            // Sketching draw effect via shader uniform
+            const mat = line.material as THREE.LineDashedMaterial;
+            if (mat.userData && mat.userData.shader) {
+                mat.userData.shader.uniforms.uDashOffset.value = lineLength * (1 - eased);
+            }
+
+            // Opacity control
             if (isFloorPlan) {
                 // Floor plan lines fade out as we transition (0% - 50%)
                 const fadeProgress = Math.min(1, progress / 0.5);
                 const fadeEased = 1 - Math.pow(1 - fadeProgress, 2);
-                if (line.material instanceof THREE.LineBasicMaterial || line.material instanceof THREE.LineDashedMaterial) {
-                    line.material.opacity = Math.max(0, 1 - fadeEased);
-                }
+                mat.opacity = Math.max(0, 1 - fadeEased) * eased;
             } else {
-                // Elevation lines fade in based on their phase
-                if (line.material instanceof THREE.LineBasicMaterial || line.material instanceof THREE.LineDashedMaterial) {
-                    line.material.opacity = eased;
-                }
+                // Elevation lines fade in based on their phase reveal
+                mat.opacity = eased;
             }
         });
 
@@ -916,9 +1055,8 @@ export default function BuildingAnimation() {
         sceneRef.current = scene;
 
         // Orthographic camera for 2D blueprint view - centered at y=0
-        // Smaller frustum = larger/zoomed in view
         const aspect = window.innerWidth / window.innerHeight;
-        const frustumSize = 6; // Reduced from 10 for larger blueprints
+        const frustumSize = 6;
         const camera = new THREE.OrthographicCamera(
             frustumSize * aspect / -2,
             frustumSize * aspect / 2,
@@ -928,7 +1066,7 @@ export default function BuildingAnimation() {
             100
         );
         camera.position.set(0, 0, 20);
-        camera.lookAt(0, 0, 0); // Look at center (0,0,0)
+        camera.lookAt(0, 0, 0);
         cameraRef.current = camera;
 
         // Renderer setup
@@ -958,10 +1096,40 @@ export default function BuildingAnimation() {
 
         // Set initial opacity for elevation lines (invisible)
         elevationLines.forEach(({ line }) => {
-            if (line.material instanceof THREE.LineBasicMaterial || line.material instanceof THREE.LineDashedMaterial) {
-                line.material.opacity = 0;
-            }
+            const mat = line.material as THREE.LineDashedMaterial;
+            mat.opacity = 0;
         });
+
+        // ==================== FLOATING GOLDEN PARTICLES ====================
+        const particleCount = 200;
+        const particleGeometry = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+        const randomSpeeds = new Float32Array(particleCount * 3); // dx, dy, phase
+
+        for (let i = 0; i < particleCount; i++) {
+            particlePositions[i * 3] = (Math.random() - 0.5) * 12; // X
+            particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 8; // Y
+            particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 5 - 2; // Z
+
+            randomSpeeds[i * 3] = (Math.random() - 0.5) * 0.005; // dx
+            randomSpeeds[i * 3 + 1] = (Math.random() * 0.004) + 0.002; // dy (upward drift)
+            randomSpeeds[i * 3 + 2] = Math.random() * Math.PI * 2; // phase
+        }
+
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        
+        const particleMaterial = new THREE.PointsMaterial({
+            color: colors.primary, // Gold
+            size: 0.035,           // Subtle size
+            transparent: true,
+            opacity: 0.35,
+            blending: THREE.AdditiveBlending,
+            depthWrite: false
+        });
+
+        const particles = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particles);
+        particlesRef.current = { points: particles, speeds: randomSpeeds };
 
         // Blueprint grid (subtle background grid for CAD effect) - centered at y=0
         const gridSize = 20;
@@ -989,14 +1157,12 @@ export default function BuildingAnimation() {
         animate();
 
         // Handle resize for orthographic camera - keep centered
-        // Smaller frustum values = larger/zoomed in blueprints
         const handleResize = () => {
             if (!cameraRef.current || !rendererRef.current) return;
 
             const width = window.innerWidth;
             const height = window.innerHeight;
             const aspect = width / height;
-            // Desktop: 6, Tablet: 7, Mobile: 8 (smaller = more zoomed in)
             const frustumSize = width < 480 ? 8 : width < 768 ? 7 : 6;
 
             cameraRef.current.left = frustumSize * aspect / -2;
@@ -1015,9 +1181,11 @@ export default function BuildingAnimation() {
             window.removeEventListener('resize', handleResize);
             cancelAnimationFrame(animationFrameRef.current);
             renderer.dispose();
+            particleGeometry.dispose();
+            particleMaterial.dispose();
+            gridMaterial.dispose();
         };
     }, [colors, createFloorPlan, createElevation, animate]);
-
 
     // Setup GSAP ScrollTrigger for text animations and scroll-based progress
     useEffect(() => {
@@ -1025,7 +1193,6 @@ export default function BuildingAnimation() {
 
         const ctx = gsap.context(() => {
             // Create a timeline for coordinated animations
-            // Extended scroll for 6 text sections + final reveal
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: containerRef.current,
@@ -1140,6 +1307,9 @@ export default function BuildingAnimation() {
                 ref={canvasRef}
                 className="absolute inset-0 w-full h-full z-10"
             />
+
+            {/* Vignette Overlay for cinematic depth */}
+            <div className="absolute inset-0 pointer-events-none z-20 bg-[radial-gradient(circle_at_center,transparent_40%,rgba(0,0,0,0.85)_100%)]"></div>
 
             {/* --- HERO OVERLAY (Fades out on scroll) --- */}
             <div className="hero-overlay absolute inset-0 z-50 flex flex-col items-center justify-center bg-black pointer-events-none">
