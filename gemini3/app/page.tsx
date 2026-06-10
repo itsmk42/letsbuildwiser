@@ -15,8 +15,7 @@ export default function Home() {
         </a>
 
         <div className="text-gray-500 text-sm max-w-md px-4 leading-relaxed">
-          <p className="font-bold text-gray-400 mb-2">Adigallu Pvt. Ltd.</p>
-          <p>Ondu Nirmana Samsthe</p>
+          <p className="font-bold text-gray-400 mb-2">Lets Build Wiser</p>
           <p>2nd Floor, 584, A Block, 20th Main Road</p>
           <p>Sahakar Nagar, Bengaluru - 560092, Karnataka</p>
         </div>

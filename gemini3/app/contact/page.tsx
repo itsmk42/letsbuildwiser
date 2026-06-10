@@ -85,7 +85,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Email Us</p>
-                                <p className="text-lg font-medium">{contactEmail}</p>
+                                <p className="text-lg font-medium">hello@letsbuildwiser.com</p>
                             </div>
                         </div>
 
@@ -95,8 +95,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Visit Us</p>
-                                <p className="text-lg font-medium">Adigallu Pvt. Ltd.</p>
-                                <p className="text-sm text-gray-400">Ondu Nirmana Samsthe</p>
+                                <p className="text-lg font-medium">Lets Build Wiser</p>
                                 <p className="text-sm text-gray-400">2nd Floor, 584, A Block, 20th Main Road</p>
                                 <p className="text-sm text-gray-400">Sahakar Nagar, Bengaluru - 560092, Karnataka</p>
                             </div>
