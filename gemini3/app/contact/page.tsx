@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
 
-const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "builderonline@gmail.com";
+const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "balleryonline@gmail.com";
 
 export default function ContactPage() {
     const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
