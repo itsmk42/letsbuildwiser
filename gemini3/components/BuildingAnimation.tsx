@@ -429,10 +429,12 @@ export default function BuildingAnimation() {
     const elevationGroupRef = useRef<THREE.Group | null>(null);
     const animationFrameRef = useRef<number>(0);
     const progressRef = useRef<{ value: number }>({ value: 0 });
+    const smoothedProgressRef = useRef(0); // Frame-interpolated for buttery smoothness
     const isInitializedRef = useRef(false);
     
     // Ref to hold points particle system and speeds
-    const particlesRef = useRef<{ points: THREE.Points; speeds: Float32Array } | null>(null);
+    const particlesRef = useRef<{ points: THREE.Points; speeds: Float32Array; sizes: Float32Array } | null>(null);
+    const gridMaterialRef = useRef<THREE.LineBasicMaterial | null>(null);
 
     // Color palette - CAD blueprint style
     const colors = useMemo(() => ({
@@ -956,30 +958,57 @@ export default function BuildingAnimation() {
 
         animationFrameRef.current = requestAnimationFrame(animate);
 
-        const progress = progressRef.current.value;
+        // ==================== SMOOTH PROGRESS (lerp) ====================
+        // Interpolate toward the target progress each frame for buttery smoothness
+        const target = progressRef.current.value;
+        const lerpFactor = 0.08; // Lower = silkier, higher = snappier
+        smoothedProgressRef.current += (target - smoothedProgressRef.current) * lerpFactor;
+        const progress = smoothedProgressRef.current;
+
         const lines = blueprintLinesRef.current;
+        const time = performance.now();
 
         // ==================== PARTICLE ANIMATION ====================
         if (particlesRef.current) {
-            const { points: particlePoints, speeds } = particlesRef.current;
+            const { points: particlePoints, speeds, sizes } = particlesRef.current;
             const positions = particlePoints.geometry.attributes.position.array as Float32Array;
+            const sizeAttr = particlePoints.geometry.attributes.size;
             const count = positions.length / 3;
 
             for (let i = 0; i < count; i++) {
-                // Drift up
+                // Gentle upward drift
                 positions[i * 3 + 1] += speeds[i * 3 + 1];
 
-                // Sway horizontally using sine wave
-                const phase = speeds[i * 3 + 2] + performance.now() * 0.0015;
-                positions[i * 3] += Math.sin(phase) * 0.003;
+                // Organic horizontal sway (two overlapping sine waves)
+                const phase = speeds[i * 3 + 2];
+                const sway = Math.sin(phase + time * 0.0012) * 0.002 + Math.sin(phase * 1.7 + time * 0.0008) * 0.001;
+                positions[i * 3] += sway;
 
-                // Reset position if it goes too high
-                if (positions[i * 3 + 1] > 4) {
-                    positions[i * 3 + 1] = -4;
-                    positions[i * 3] = (Math.random() - 0.5) * 12;
+                // Gentle size breathing
+                if (sizeAttr) {
+                    const baseSz = sizes[i];
+                    (sizeAttr.array as Float32Array)[i] = baseSz * (0.85 + 0.15 * Math.sin(phase + time * 0.001));
+                }
+
+                // Soft wrap: reset with random Y below viewport
+                if (positions[i * 3 + 1] > 5) {
+                    positions[i * 3 + 1] = -5 - Math.random() * 2;
+                    positions[i * 3] = (Math.random() - 0.5) * 14;
                 }
             }
             particlePoints.geometry.attributes.position.needsUpdate = true;
+            if (sizeAttr) sizeAttr.needsUpdate = true;
+
+            // Fade particles in/out based on overall scroll progress
+            const pMat = particlePoints.material as THREE.PointsMaterial;
+            const particleOpacity = progress < 0.05 ? progress / 0.05 : progress > 0.85 ? (1 - progress) / 0.15 : 1;
+            pMat.opacity = 0.35 * Math.max(0, Math.min(1, particleOpacity));
+        }
+
+        // ==================== GRID BREATHING ====================
+        if (gridMaterialRef.current) {
+            // Subtle opacity pulse (0.25 → 0.45 over ~8s cycle)
+            gridMaterialRef.current.opacity = 0.35 + 0.1 * Math.sin(time * 0.0008);
         }
 
         // ==================== BLUEPRINT LINE ANIMATION ====================
@@ -1000,8 +1029,9 @@ export default function BuildingAnimation() {
 
             const elementProgress = Math.max(0, Math.min(1, (progress - phaseStart) / (phaseEnd - phaseStart)));
 
-            // easeOutExpo curve for premium reveals
-            const eased = elementProgress === 1 ? 1 : 1 - Math.pow(2, -10 * elementProgress);
+            // Smooth ease-out quartic for silk-like reveals (less aggressive than expo)
+            const t = elementProgress;
+            const eased = 1 - Math.pow(1 - t, 4);
 
             // Sketching draw effect via shader uniform
             const mat = line.material as THREE.LineDashedMaterial;
@@ -1013,7 +1043,7 @@ export default function BuildingAnimation() {
             if (isFloorPlan) {
                 // Floor plan lines fade out as we transition (0% - 50%)
                 const fadeProgress = Math.min(1, progress / 0.5);
-                const fadeEased = 1 - Math.pow(1 - fadeProgress, 2);
+                const fadeEased = 1 - Math.pow(1 - fadeProgress, 3); // Cubic for softer tail
                 mat.opacity = Math.max(0, 1 - fadeEased) * eased;
             } else {
                 // Elevation lines fade in based on their phase reveal
@@ -1024,22 +1054,34 @@ export default function BuildingAnimation() {
         // ==================== VIEW TRANSFORMATION ====================
         // Smoothly transition from floor plan to elevation view
         const transitionProgress = Math.max(0, Math.min(1, (progress - 0.1) / 0.4));
-        const transitionEased = transitionProgress < 0.5
-            ? 2 * transitionProgress * transitionProgress
-            : 1 - Math.pow(-2 * transitionProgress + 2, 2) / 2;
+        // Smoother ease-in-out quintic
+        const tp = transitionProgress;
+        const transitionEased = tp < 0.5
+            ? 16 * tp * tp * tp * tp * tp
+            : 1 - Math.pow(-2 * tp + 2, 5) / 2;
 
-        // Floor plan group fades out and moves down
+        // Floor plan group fades out, scales down slightly, and moves down
         if (floorPlanGroupRef.current) {
             floorPlanGroupRef.current.rotation.x = -Math.PI / 2 + transitionEased * Math.PI / 2;
             floorPlanGroupRef.current.position.y = transitionEased * -8;
+            const fpScale = 1 - transitionEased * 0.15; // Subtle shrink as it leaves
+            floorPlanGroupRef.current.scale.set(fpScale, fpScale, fpScale);
         }
 
         // Elevation group is centered at y=0 (viewport center) after transition
-        // Starts above and settles to center
         if (elevationGroupRef.current) {
-            // Start position: above viewport, End position: centered (y=0)
             elevationGroupRef.current.position.y = 4 * (1 - transitionEased);
+            // Subtle scale-up from 0.92 → 1 for a "settling in" feel
+            const elScale = 0.92 + 0.08 * transitionEased;
+            elevationGroupRef.current.scale.set(elScale, elScale, elScale);
         }
+
+        // ==================== CAMERA BREATHING ====================
+        // Very subtle drift to keep the scene alive
+        const camBreathX = Math.sin(time * 0.0003) * 0.03;
+        const camBreathY = Math.cos(time * 0.00025) * 0.02;
+        cameraRef.current.position.x = camBreathX;
+        cameraRef.current.position.y = camBreathY;
 
         rendererRef.current.render(sceneRef.current, cameraRef.current);
     }, []);
@@ -1101,26 +1143,32 @@ export default function BuildingAnimation() {
         });
 
         // ==================== FLOATING GOLDEN PARTICLES ====================
-        const particleCount = 200;
+        const particleCount = 250;
         const particleGeometry = new THREE.BufferGeometry();
         const particlePositions = new Float32Array(particleCount * 3);
+        const particleSizes = new Float32Array(particleCount);
         const randomSpeeds = new Float32Array(particleCount * 3); // dx, dy, phase
 
         for (let i = 0; i < particleCount; i++) {
-            particlePositions[i * 3] = (Math.random() - 0.5) * 12; // X
-            particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 8; // Y
+            particlePositions[i * 3] = (Math.random() - 0.5) * 14; // X – wider spread
+            particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 10; // Y – taller spread
             particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 5 - 2; // Z
 
-            randomSpeeds[i * 3] = (Math.random() - 0.5) * 0.005; // dx
-            randomSpeeds[i * 3 + 1] = (Math.random() * 0.004) + 0.002; // dy (upward drift)
+            randomSpeeds[i * 3] = (Math.random() - 0.5) * 0.004; // dx
+            randomSpeeds[i * 3 + 1] = (Math.random() * 0.003) + 0.001; // dy (gentler upward drift)
             randomSpeeds[i * 3 + 2] = Math.random() * Math.PI * 2; // phase
+
+            // Varied sizes: mostly tiny, a few larger ones for depth
+            particleSizes[i] = 0.02 + Math.pow(Math.random(), 3) * 0.06;
         }
 
         particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        particleGeometry.setAttribute('size', new THREE.BufferAttribute(particleSizes, 1));
         
         const particleMaterial = new THREE.PointsMaterial({
             color: colors.primary, // Gold
-            size: 0.035,           // Subtle size
+            size: 0.035,
+            sizeAttenuation: true, // Depth-based sizing
             transparent: true,
             opacity: 0.35,
             blending: THREE.AdditiveBlending,
@@ -1129,16 +1177,17 @@ export default function BuildingAnimation() {
 
         const particles = new THREE.Points(particleGeometry, particleMaterial);
         scene.add(particles);
-        particlesRef.current = { points: particles, speeds: randomSpeeds };
+        particlesRef.current = { points: particles, speeds: randomSpeeds, sizes: particleSizes };
 
         // Blueprint grid (subtle background grid for CAD effect) - centered at y=0
         const gridSize = 20;
         const gridDivisions = 40;
         const gridMaterial = new THREE.LineBasicMaterial({
-            color: 0x1a1a2a,
+            color: 0x1a1a2e,
             transparent: true,
-            opacity: 0.4
+            opacity: 0.35
         });
+        gridMaterialRef.current = gridMaterial;
 
         for (let i = -gridSize/2; i <= gridSize/2; i += gridSize/gridDivisions) {
             const hPoints = [
@@ -1198,7 +1247,7 @@ export default function BuildingAnimation() {
                     trigger: containerRef.current,
                     start: "top top",
                     end: "+=700%",
-                    scrub: 0.5,
+                    scrub: 1.2, // Higher value = silkier scroll tracking
                     pin: true,
                     anticipatePin: 1,
                     invalidateOnRefresh: true,
