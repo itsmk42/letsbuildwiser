@@ -52,6 +52,8 @@ export default function Navbar() {
                 <button
                     onClick={() => setIsOpen(!isOpen)}
                     className="md:hidden text-white text-2xl focus:outline-none"
+                    aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
+                    aria-expanded={isOpen}
                 >
                     {isOpen ? <HiX /> : <HiMenuAlt3 />}
                 </button>

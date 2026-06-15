@@ -42,7 +42,6 @@ export default function ContactPage() {
                 throw new Error(errorData.message || "Failed to submit inquiry.");
             }
         } catch (error: any) {
-            console.error("FormSubmit Error:", error);
             setErrorMessage(error.message || "Something went wrong. Please try again.");
             setStatus("error");
         }
@@ -69,7 +68,7 @@ export default function ContactPage() {
                     </div>
 
                     <div className="space-y-6">
-                        <div className="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors">
+                        <a href="tel:+919019707029" className="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors">
                             <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[var(--color-gold)]">
                                 <FaPhone size={20} />
                             </div>
@@ -77,9 +76,9 @@ export default function ContactPage() {
                                 <p className="text-sm text-gray-500">Call Us</p>
                                 <p className="text-lg font-medium">+91 90197 07029</p>
                             </div>
-                        </div>
+                        </a>
 
-                        <div className="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors">
+                        <a href="mailto:hello@letsbuildwiser.com" className="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors">
                             <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[var(--color-gold)]">
                                 <FaEnvelope size={20} />
                             </div>
@@ -87,9 +86,9 @@ export default function ContactPage() {
                                 <p className="text-sm text-gray-500">Email Us</p>
                                 <p className="text-lg font-medium">hello@letsbuildwiser.com</p>
                             </div>
-                        </div>
+                        </a>
 
-                        <div className="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors">
+                        <a href="https://maps.google.com/?q=2nd+Floor+584+A+Block+20th+Main+Road+Sahakar+Nagar+Bengaluru+560092" target="_blank" rel="noopener noreferrer" className="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors">
                             <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-[var(--color-gold)]">
                                 <FaMapMarkerAlt size={20} />
                             </div>
@@ -99,7 +98,7 @@ export default function ContactPage() {
                                 <p className="text-sm text-gray-400">2nd Floor, 584, A Block, 20th Main Road</p>
                                 <p className="text-sm text-gray-400">Sahakar Nagar, Bengaluru - 560092, Karnataka</p>
                             </div>
-                        </div>
+                        </a>
                     </div>
                 </div>
 

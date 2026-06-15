@@ -3,6 +3,8 @@ import BuildingAnimation from "@/components/BuildingAnimation";
 export default function Home() {
   return (
     <main className="min-h-screen bg-black">
+      {/* Visually hidden h1 for SEO crawlers that can't execute JS */}
+      <h1 className="sr-only">Letsbuildwiser — Civil Engineering Consultation & Construction in Bengaluru</h1>
 
       <BuildingAnimation />
 
@@ -11,9 +13,9 @@ export default function Home() {
         {/* Ambient background glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] rounded-full bg-[var(--color-gold)] opacity-[0.03] blur-[150px] pointer-events-none"></div>
 
-        <h3 className="relative text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
+        <h2 className="relative text-3xl md:text-4xl lg:text-5xl font-bold text-white tracking-tight mb-4">
           Ready to start <span className="gold-gradient-text">your project?</span>
-        </h3>
+        </h2>
         <p className="relative text-gray-400 text-base md:text-lg max-w-lg mx-auto mb-10 px-6 font-light tracking-wide">
           Let our expert engineers bring your vision to life with precision, quality, and care.
         </p>
