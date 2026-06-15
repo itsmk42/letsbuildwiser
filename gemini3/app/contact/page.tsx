@@ -75,7 +75,7 @@ export default function ContactPage() {
                             </div>
                             <div>
                                 <p className="text-sm text-gray-500">Call Us</p>
-                                <p className="text-lg font-medium">+1 (555) 123-4567</p>
+                                <p className="text-lg font-medium">+91 90197 07029</p>
                             </div>
                         </div>
 
@@ -156,7 +156,7 @@ export default function ContactPage() {
                                             required
                                             disabled={status === "submitting"}
                                             className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-[var(--color-gold)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                                            placeholder="+1 (555) 000-0000"
+                                            placeholder="+91 XXXXX XXXXX"
                                         />
                                     </div>
                                 </div>
