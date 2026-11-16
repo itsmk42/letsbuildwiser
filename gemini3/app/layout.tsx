@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import ScrollEffects from "@/components/ScrollEffects";
 
 export const metadata: Metadata = {
   title: {
@@ -110,19 +111,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
-        <meta name="theme-color" content="#000000" />
+        <meta name="theme-color" content="#0A0A0A" />
+        {/* lets the stylesheet hide draw-on elements only when scripts can reveal them */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <link rel="manifest" href="/site.webmanifest" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className={outfit.className}>
+      <body>
         <Navbar />
-        <main className="min-h-screen">{children}</main>
+        <main>{children}</main>
         <Footer />
+        <ScrollEffects />
         <noscript>
           <div style={{ padding: "2rem", textAlign: "center", color: "#fff", backgroundColor: "#000" }}>
             <h1>Letsbuildwiser</h1>
