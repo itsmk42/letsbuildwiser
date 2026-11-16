@@ -70,16 +70,16 @@ export default function HouseDrawing() {
           </g>
           {/* 6 · sustainable */}
           <g data-s="6">
-            <path className="f ns" stroke="none" fill="rgba(216,178,74,.16)" d="M196 170L210 146H250L236 170ZM248 170L262 146H302L288 170ZM300 170L314 146H354L340 170Z" />
+            <path className="f ns" stroke="none" fill="rgba(255,198,26,.16)" d="M196 170L210 146H250L236 170ZM248 170L262 146H302L288 170ZM300 170L314 146H354L340 170Z" />
             <path className="d" d="M196 170L210 146H250L236 170M223 170L237 146M203 158H243" />
             <path className="d" d="M248 170L262 146H302L288 170M275 170L289 146M255 158H295" />
             <path className="d" d="M300 170L314 146H354L340 170M327 170L341 146M307 158H347" />
-            <path className="f ns" stroke="none" fill="rgba(216,178,74,.16)" d="M104 356C78 358 70 334 84 322C78 300 104 290 116 303C136 297 143 322 130 334C138 350 119 361 104 356Z" />
+            <path className="f ns" stroke="none" fill="rgba(255,198,26,.16)" d="M104 356C78 358 70 334 84 322C78 300 104 290 116 303C136 297 143 322 130 334C138 350 119 361 104 356Z" />
             <path className="d" d="M104 410V356M104 380l-10-10M104 372l9-9" />
             <path className="d" d="M104 356C78 358 70 334 84 322C78 300 104 290 116 303C136 297 143 322 130 334C138 350 119 361 104 356Z" />
             <path className="d" d="M164 196V368H148V378" />
             <path className="d" d="M136 378H160V410H136ZM136 390H160" />
-            <circle className="f" cx="78" cy="62" r="15" fill="rgba(216,178,74,.22)" stroke="none" />
+            <circle className="f" cx="78" cy="62" r="15" fill="rgba(255,198,26,.22)" stroke="none" />
             <path className="d" d="M78 36V30M78 88V94M52 62H46M104 62H110M60 44l-4-4M96 44l4-4M60 80l-4 4M96 80l4 4" />
           </g>
         </g>

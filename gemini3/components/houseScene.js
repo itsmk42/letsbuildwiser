@@ -19,7 +19,7 @@
  */
 import * as THREE from "three";
 
-const GOLD = 0xd8b24a;
+const GOLD = 0xffc61a;
 const LINE = 0xe6e3dc;
 const CONCRETE = 0x6f6b64;
 const BG = 0x0a0a0a;
@@ -662,8 +662,8 @@ export function createHouseScene(canvas, opts = {}) {
     ribbon(x, PZF, x, PZB, 0.05);
     ribbon(x - 0.4, PZF, x + 0.4, PZF, 0.05);
     ribbon(x - 0.4, PZB, x + 0.4, PZB, 0.05);
-    label("80 FT", 0, 0.05, z + 1.1, 1.15, "#D8B24A");
-    label("70 FT", x + 2.3, 0.05, 2.6, 1.15, "#D8B24A");
+    label("80 FT", 0, 0.05, z + 1.1, 1.15, "#FFC61A");
+    label("70 FT", x + 2.3, 0.05, 2.6, 1.15, "#FFC61A");
   }, { edges: false, out: [2.95, 3.45] });
 
   /* ═════════ 1–2 · structure ═════════ */
@@ -732,8 +732,8 @@ export function createHouseScene(canvas, opts = {}) {
     fadeLine(r(0.06), true, true);
     fadeLine(r(top), true, true);
     for (const p of r(0.06)) fadeLine([p, new THREE.Vector3(p.x, top, p.z)], true);
-    label("SETBACK", -PX + 0.8, 0.05, z1 + 1.0, 0.62, "#D8B24A");
-    label("HEIGHT LIMIT", 0, top + 0.6, z1, 0.76, "#D8B24A");
+    label("SETBACK", -PX + 0.8, 0.05, z1 + 1.0, 0.62, "#FFC61A");
+    label("HEIGHT LIMIT", 0, top + 0.6, z1, 0.76, "#FFC61A");
   }, { edges: false, out: [4.2, 4.7] });
 
   part(3.1, 3.55, () => {
@@ -1231,6 +1231,48 @@ export function createHouseScene(canvas, opts = {}) {
     car.visible = false;
     scene.add(car);
   }
+  // a properly modelled car replaces the simple stand-in above once it has loaded
+  if (opts.assets) {
+    Promise.all([import("three/addons/loaders/GLTFLoader.js"), import("three/addons/libs/meshopt_decoder.module.js")])
+      .then(([{ GLTFLoader }, { MeshoptDecoder }]) => {
+        const gltfLoader = new GLTFLoader();
+        gltfLoader.setMeshoptDecoder(MeshoptDecoder);
+        gltfLoader.load(opts.assets + "car.glb", (gltf) => {
+          const model = gltf.scene;
+          model.traverse((o) => {
+            if (!o.isMesh) return;
+            o.castShadow = true;
+            o.receiveShadow = true;
+            const m = o.material;
+            if (m.transmission > 0) {
+              // tinted, mirror-like glass to match the house (and avoid a costly transmission pass)
+              m.transmission = 0;
+              m.transparent = false;
+              m.color.set(0x55646f);
+              m.metalness = 1;
+              m.roughness = 0.06;
+            }
+            if (/^Paint 1/.test(m.name)) {
+              m.color.set(0x1b2530); // deep graphite blue, in place of the model's default red
+              m.metalness = 0.85;
+              m.roughness = 0.28;
+            }
+            m.envMapIntensity = 1.2;
+          });
+          const bb = new THREE.Box3().setFromObject(model);
+          const size = bb.getSize(new THREE.Vector3());
+          const holder = new THREE.Group();
+          model.position.set(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+          holder.add(model);
+          holder.scale.setScalar(4.7 / Math.max(size.x, size.z));
+          // glTF models face +z; the car group expects the nose along +x
+          holder.rotation.y = size.z >= size.x ? Math.PI / 2 : 0;
+          car.clear();
+          car.add(holder);
+        }, undefined, () => {});
+      })
+      .catch(() => {});
+  }
 
   /* ───────── photographic sky and scanned textures ───────── */
   // Optional. Everything above already works with procedural stand-ins; these replace them as they load.
@@ -1388,9 +1430,13 @@ export function createHouseScene(canvas, opts = {}) {
     /* camera */
     const tilt = span(s, 1.0, 2.35);
     const end = span(s, 7.0, 7.8);
-    const phi = lerp(0.035, 1.0, tilt) + 0.3 * span(s, 2.35, 5.6) + 0.12 * span(s, 5.6, 6.9) + 0.03 * end;
-    let theta = lerp(0, -0.62, tilt) + 0.2 * lin(s, 2.35, 6.0) + 0.94 * span(s, 5.9, 7.3);
-    theta += Math.sin(time * 0.00022) * 0.04 * span(s, 6.6, 7.4);
+    const phi = lerp(0.035, 1.0, tilt) + 0.3 * span(s, 2.35, 5.6) + 0.12 * span(s, 5.6, 6.9) + 0.03 * end
+      + Math.sin(time * 0.00031) * 0.012 * span(s, 7.25, 7.85);
+    // views from the front-left during the build, swinging round to the right as the garden grows;
+    // the closing shot then pans from right to left and settles square-on to the front of the house
+    const settle = span(s, 7.25, 7.85);
+    let theta = lerp(0, -0.62, tilt) + 0.2 * lin(s, 2.35, 6.0) + 1.24 * span(s, 5.9, 6.95) - 0.82 * span(s, 7.0, 7.8);
+    theta += Math.sin(time * 0.00045) * 0.075 * settle; // slow side-to-side sway once it has settled
     const aspect = width / height;
     const wide = aspect > 1.15;
     // look at the middle of the plot for the plan, then at the house

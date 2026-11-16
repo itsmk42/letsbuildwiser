@@ -1,7 +1,18 @@
 # Scene assets
 
-All files here are derived from CC0 (public-domain) assets published by Poly Haven — https://polyhaven.com.
-No attribution is required; this note is kept so the sources can be traced.
+## Car model — attribution required
+
+`car.glb` is adapted from **"Car Concept"** — © 2024 Darmstadt Graphics Group GmbH, model and textures by Eric Chadwick —
+from the Khronos glTF Sample Assets (https://github.com/KhronosGroup/glTF-Sample-Assets/tree/main/Models/CarConcept),
+licensed under Creative Commons Attribution 4.0 International (https://creativecommons.org/licenses/by/4.0/).
+
+Changes made: Khronos and 3D Commerce logo textures removed (licence plate and tyre sidewalls made plain); geometry simplified
+and compressed (9.8 MB → 0.9 MB); body repainted graphite blue and glass made opaque-tinted at load time.
+
+## Sky and textures
+
+The other files are derived from CC0 (public-domain) assets published by Poly Haven — https://polyhaven.com.
+No attribution is required for these; this note is kept so the sources can be traced.
 
 | File | Source asset | What was done |
 |---|---|---|
