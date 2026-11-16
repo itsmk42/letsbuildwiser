@@ -42,8 +42,8 @@ export default function ContactForm() {
     return (
       <div className="formok" role="status">
         <svg viewBox="-30 -30 60 60" aria-hidden>
-          <circle r="27" fill="none" stroke="#FFC61A" strokeWidth="1.5" />
-          <path d="M-11 0l8 8 15-17" fill="none" stroke="#FFC61A" strokeWidth="2" />
+          <circle r="27" fill="none" stroke="#FFE100" strokeWidth="1.5" />
+          <path d="M-11 0l8 8 15-17" fill="none" stroke="#FFE100" strokeWidth="2" />
         </svg>
         <h4>Inquiry Received</h4>
         <p>Thank you! We have received your message and will get back to you as soon as possible.</p>

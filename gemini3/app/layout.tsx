@@ -114,6 +114,7 @@ export default function RootLayout({
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <meta name="theme-color" content="#0A0A0A" />
+        <meta name="color-scheme" content="dark" />
         {/* lets the stylesheet hide draw-on elements only when scripts can reveal them */}
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
         <link rel="manifest" href="/site.webmanifest" />

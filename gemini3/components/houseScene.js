@@ -19,7 +19,7 @@
  */
 import * as THREE from "three";
 
-const GOLD = 0xffc61a;
+const GOLD = 0xffe100;
 const LINE = 0xe6e3dc;
 const CONCRETE = 0x6f6b64;
 const BG = 0x0a0a0a;
@@ -662,8 +662,8 @@ export function createHouseScene(canvas, opts = {}) {
     ribbon(x, PZF, x, PZB, 0.05);
     ribbon(x - 0.4, PZF, x + 0.4, PZF, 0.05);
     ribbon(x - 0.4, PZB, x + 0.4, PZB, 0.05);
-    label("80 FT", 0, 0.05, z + 1.1, 1.15, "#FFC61A");
-    label("70 FT", x + 2.3, 0.05, 2.6, 1.15, "#FFC61A");
+    label("80 FT", 0, 0.05, z + 1.1, 1.15, "#FFE100");
+    label("70 FT", x + 2.3, 0.05, 2.6, 1.15, "#FFE100");
   }, { edges: false, out: [2.95, 3.45] });
 
   /* ═════════ 1–2 · structure ═════════ */
@@ -732,8 +732,8 @@ export function createHouseScene(canvas, opts = {}) {
     fadeLine(r(0.06), true, true);
     fadeLine(r(top), true, true);
     for (const p of r(0.06)) fadeLine([p, new THREE.Vector3(p.x, top, p.z)], true);
-    label("SETBACK", -PX + 0.8, 0.05, z1 + 1.0, 0.62, "#FFC61A");
-    label("HEIGHT LIMIT", 0, top + 0.6, z1, 0.76, "#FFC61A");
+    label("SETBACK", -PX + 0.8, 0.05, z1 + 1.0, 0.62, "#FFE100");
+    label("HEIGHT LIMIT", 0, top + 0.6, z1, 0.76, "#FFE100");
   }, { edges: false, out: [4.2, 4.7] });
 
   part(3.1, 3.55, () => {
@@ -1259,14 +1259,13 @@ export function createHouseScene(canvas, opts = {}) {
             }
             m.envMapIntensity = 1.2;
           });
-          const bb = new THREE.Box3().setFromObject(model);
-          const size = bb.getSize(new THREE.Vector3());
+          // The model is true to scale (4.36 m long), stands on y = 0 and faces +z, with its middle
+          // 0.24 m ahead of its origin. These figures come from the file itself: measuring it at run time
+          // is unreliable because its four wheels are instanced, which inflates the computed bounds.
           const holder = new THREE.Group();
-          model.position.set(-(bb.min.x + bb.max.x) / 2, -bb.min.y, -(bb.min.z + bb.max.z) / 2);
+          model.position.set(0, 0, -0.238);
           holder.add(model);
-          holder.scale.setScalar(4.7 / Math.max(size.x, size.z));
-          // glTF models face +z; the car group expects the nose along +x
-          holder.rotation.y = size.z >= size.x ? Math.PI / 2 : 0;
+          holder.rotation.y = Math.PI / 2; // the car group expects the nose along +x
           car.clear();
           car.add(holder);
         }, undefined, () => {});
